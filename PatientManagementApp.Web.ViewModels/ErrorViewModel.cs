@@ -1,4 +1,4 @@
-namespace PatientManagementApp.Web.Models
+namespace PatientManagementApp.Web.ViewModels
 {
     public class ErrorViewModel
     {

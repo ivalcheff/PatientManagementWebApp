@@ -15,4 +15,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PatientManagementApp.Common\PatientManagementApp.Common.csproj" />
+    <ProjectReference Include="..\PatientManagementApp.Web.ViewModels\PatientManagementApp.Web.ViewModels.csproj" />
+  </ItemGroup>
+
 </Project>
