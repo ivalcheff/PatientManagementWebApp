@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using static PatientManagementApp.Common.ModelValidationConstraints.Diagnosis;
+
 
 namespace PatientManagementApp.Data.Models
 {
@@ -13,10 +12,14 @@ namespace PatientManagementApp.Data.Models
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required] 
+        [MaxLength(DiagnosisNameMaxLength)]
+        [Comment("The patient's diagnosis")]
         public string Name { get; set; } = null!;
 
 
         [Required] 
+        [MaxLength(DiagnosisDescriptionMaxLength)]
+        [Comment("Description of the diagnosis")]
         public string Description { get; set; } = null!;
 
         public virtual ICollection<PatientsDiagnoses> PatientsDiagnoses { get; set; } = new List<PatientsDiagnoses>();

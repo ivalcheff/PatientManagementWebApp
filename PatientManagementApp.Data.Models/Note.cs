@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using static PatientManagementApp.Common.ModelValidationConstraints.Note;
+
 
 namespace PatientManagementApp.Data.Models
 {
@@ -12,12 +11,17 @@ namespace PatientManagementApp.Data.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+        [Required]
         public Guid PatientId { get; set; }
 
-        [Required] [ForeignKey(nameof(PatientId))]
+        [Required] 
+        [ForeignKey(nameof(PatientId))]
+        [Comment("The patient the note is for")]
         public virtual Patient Patient { get; set; } = null!;
 
-        [Required] [MaxLength] 
+        [Required] 
+        [MaxLength(NoteTextMaxLength)]
+        [Comment("The content of the note")]
         public string NoteText { get; set; } = null!;
     }
 }
