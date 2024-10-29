@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientManagementApp.Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientManagementApp.Data.Models", "PatientManagementApp.Data.Models\PatientManagementApp.Data.Models.csproj", "{2F258118-9437-4625-A539-500512FF2245}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{E190896F-75E8-4A08-AEE0-BBD38B3243F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{1CE2F92F-F017-4059-A41F-49D77146BEAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +40,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5A310821-93C5-4539-B20B-255AE98A476D} = {E190896F-75E8-4A08-AEE0-BBD38B3243F8}
+		{030B632F-7FC3-483B-807B-84E579E16B8A} = {E190896F-75E8-4A08-AEE0-BBD38B3243F8}
+		{2F258118-9437-4625-A539-500512FF2245} = {1CE2F92F-F017-4059-A41F-49D77146BEAB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {31C75A91-002C-4508-8913-FEAA17E0DD0D}

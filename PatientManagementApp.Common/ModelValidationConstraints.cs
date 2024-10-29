@@ -100,7 +100,6 @@ namespace PatientManagementApp.Common
             public const int ContentTypeMinLength = 3;
             public const int ContentTypeMaxLength = 20;
 
-            public const int 
         }
 
     }

@@ -12,6 +12,11 @@ namespace PatientManagementApp.Data.Models
         [Key] 
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        public string UserId { get; set; } = null!;
+        [ForeignKey(nameof(UserId))] 
+        public virtual ApplicationUser User { get; set; } = null!;
+
+
         [Required]
         [MaxLength(PatientFirstNameMaxLength)]
         [Comment("Patient's first name")]

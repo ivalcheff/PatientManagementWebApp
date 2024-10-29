@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using static PatientManagementApp.Common.ModelValidationConstraints.Practitioner;
 
@@ -10,6 +11,11 @@ namespace PatientManagementApp.Data.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        // Foreign Key to link Practitioner to ApplicationUser
+        public string UserId { get; set; } = null!;
+        [ForeignKey(nameof(UserId))]
+        public virtual ApplicationUser User { get; set; } = null!;
 
         [Required]
         [MaxLength(PractitionerFirstNameMaxLength)]
