@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using PatientManagementApp.Data;
 using PatientManagementApp.Web.Data;
 
 namespace PatientManagementApp.Web.Data.Migrations

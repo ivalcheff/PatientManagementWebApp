@@ -18,6 +18,8 @@ namespace PatientManagementApp.Data.Configuration
                 .HasOne(p => p.User)
                 .WithOne()
                 .HasForeignKey<Practitioner>(p => p.UserId);
+
+
         }
 
 

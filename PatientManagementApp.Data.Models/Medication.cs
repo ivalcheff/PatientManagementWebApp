@@ -28,5 +28,10 @@ namespace PatientManagementApp.Data.Models
         [Required]
         [Comment("The dosage per day")]
         public decimal Dosage { get; set; }
+
+        [Required]
+        [Comment("Which patients are on this medication")]
+        public virtual ICollection<PatientsMedications> PatientsMedications { get; set; } =
+            new HashSet<PatientsMedications>();
     }
 }
