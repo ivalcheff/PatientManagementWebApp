@@ -17,7 +17,8 @@ namespace PatientManagementApp.Data.Models
 
         [Required]
         [Comment("a list of all practitioners with this specialty")]
-        public virtual ICollection<PractitionersSpecialties> PractitionersSpecialties { get; set; } = new List<PractitionersSpecialties>();
+        public virtual ICollection<PractitionersSpecialties> PractitionersSpecialties { get; set; } 
+            = new HashSet<PractitionersSpecialties>();
 
     }
 }

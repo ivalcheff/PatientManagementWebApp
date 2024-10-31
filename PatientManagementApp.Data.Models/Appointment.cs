@@ -21,5 +21,14 @@ namespace PatientManagementApp.Data.Models
 
         [Comment("Appointment end time")]
         public DateTime EndDate { get; set; }
+
+        public Guid PatientId { get; set; }
+        [ForeignKey(nameof(PatientId))]
+        public virtual Patient Patient { get; set; } = null!;
+
+        public Guid PractitionerId { get; set; }
+        [ForeignKey(nameof(PractitionerId))]
+        public virtual Practitioner Practitioner { get; set; } = null!;
+
     }
 }

@@ -22,7 +22,6 @@ namespace PatientManagementApp.Data.Models
         // Binary data of the file
         public byte[] Data { get; set; } = null!;
 
-        // Optional: Foreign key to Patient for patient-specific files
         public Guid PatientId { get; set; }
         [ForeignKey(nameof(PatientId))]
         public virtual Patient Patient { get; set; } = null!;

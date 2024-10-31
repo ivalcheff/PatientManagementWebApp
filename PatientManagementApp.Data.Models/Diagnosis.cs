@@ -22,7 +22,7 @@ namespace PatientManagementApp.Data.Models
         [Comment("Description of the diagnosis")]
         public string Description { get; set; } = null!;
 
-        public virtual ICollection<PatientsDiagnoses> PatientsDiagnoses { get; set; } = new List<PatientsDiagnoses>();
+        public virtual ICollection<PatientsDiagnoses> PatientsDiagnoses { get; set; } = new HashSet<PatientsDiagnoses>();
 
     }
 }

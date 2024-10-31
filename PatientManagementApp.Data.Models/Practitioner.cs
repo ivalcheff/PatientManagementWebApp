@@ -27,11 +27,6 @@ namespace PatientManagementApp.Data.Models
         [Comment("Practitioner's last name")]
         public string LastName { get; set; } = null!;
 
-        [Required] 
-        [MaxLength(EmailMaxLength)]
-        [Comment("Practitioner's email address/ also current user's username")]
-        public string Email { get; set; } = null!;
-
         [Required]
         [MaxLength(PhoneMaxLength)]
         [Comment("Practitioner's phone number")]
@@ -43,10 +38,16 @@ namespace PatientManagementApp.Data.Models
 
         [Required]
         [Comment("A list of all the patients for this practitioner")]
-        public ICollection<Patient> Patients { get; set; } = new List<Patient>();
+        public ICollection<Patient> Patients { get; set; } = 
+            new HashSet<Patient>();
 
         [Required]
         [Comment("A list of the practitioner's specialties")]
-        public ICollection<PractitionersSpecialties> PractitionersSpecialties { get; set; } = new List<PractitionersSpecialties>();
+        public ICollection<PractitionersSpecialties> PractitionersSpecialties { get; set; } =
+            new HashSet<PractitionersSpecialties>();
+
+        [Comment("The list of appointments")]
+        public virtual ICollection<Appointment> Appointments { get; set; } =
+            new HashSet<Appointment>();
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
+using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Web.Data;
 
@@ -85,7 +86,7 @@ namespace PatientManagementApp.Web
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
                 string email = "admin@admin.com";
-                string password = "Iva123!";
+                string password = "Admin123!";
 
                 if (await userManager.FindByEmailAsync(email) == null)
                 {
