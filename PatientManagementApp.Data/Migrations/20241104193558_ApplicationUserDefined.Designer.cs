@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PatientManagementApp.Data;
 
@@ -11,9 +12,11 @@ using PatientManagementApp.Data;
 namespace PatientManagementApp.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241104193558_ApplicationUserDefined")]
+    partial class ApplicationUserDefined
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -597,42 +600,42 @@ namespace PatientManagementApp.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("41a26781-459e-4c7a-8def-081767d81c83"),
+                            Id = new Guid("fe8c4065-c407-47d4-92be-59c38aecd729"),
                             Name = "Psychiatrist"
                         },
                         new
                         {
-                            Id = new Guid("10d27636-cabb-47f0-8b5d-a2a8bc0c7079"),
+                            Id = new Guid("9da3506e-6e19-425c-9876-f031cd354da3"),
                             Name = "Psychologist"
                         },
                         new
                         {
-                            Id = new Guid("20e93830-4790-444c-82eb-d8f790a39566"),
+                            Id = new Guid("d1beeb2e-9d18-4ce0-8c73-bdf4ea088c16"),
                             Name = "Hypnotherapist"
                         },
                         new
                         {
-                            Id = new Guid("fa31004c-59db-4a7a-acce-259376cfd9d5"),
+                            Id = new Guid("47ffffcd-600a-4c49-8d89-c660d51c076d"),
                             Name = "Speech therapist"
                         },
                         new
                         {
-                            Id = new Guid("eccf7b2c-5b39-451b-bd6d-2f168d01f4d6"),
+                            Id = new Guid("a549671e-ee84-4d3d-9439-c649a9d72446"),
                             Name = "Clinical psychologist"
                         },
                         new
                         {
-                            Id = new Guid("ecad484c-39b9-412b-9e1f-3ada69f3ce91"),
+                            Id = new Guid("20fc9fae-db0f-40da-a3a1-1f28634eb5f6"),
                             Name = "Group therapist"
                         },
                         new
                         {
-                            Id = new Guid("77b1b8bb-02dc-4d0e-bbe4-e648ae78fc41"),
+                            Id = new Guid("047c2567-577a-4a3d-8519-73a5808b88d8"),
                             Name = "Family therapist"
                         },
                         new
                         {
-                            Id = new Guid("f189639b-76c3-4a9e-9049-aba937485a66"),
+                            Id = new Guid("21f1fe19-dffe-4aad-9b75-0ae340313e54"),
                             Name = "Psychotherapist"
                         });
                 });

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PatientManagementApp.Data;
 
@@ -11,9 +12,11 @@ using PatientManagementApp.Data;
 namespace PatientManagementApp.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241104182701_UserChange")]
+    partial class UserChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -597,42 +600,42 @@ namespace PatientManagementApp.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("41a26781-459e-4c7a-8def-081767d81c83"),
+                            Id = new Guid("982f9555-c950-419d-bd9b-e22e09671370"),
                             Name = "Psychiatrist"
                         },
                         new
                         {
-                            Id = new Guid("10d27636-cabb-47f0-8b5d-a2a8bc0c7079"),
+                            Id = new Guid("68c02c89-f3a5-41a1-88bc-6a0b58b0fb50"),
                             Name = "Psychologist"
                         },
                         new
                         {
-                            Id = new Guid("20e93830-4790-444c-82eb-d8f790a39566"),
+                            Id = new Guid("c9da2426-246a-4a2d-9dc0-aadcc8861ae1"),
                             Name = "Hypnotherapist"
                         },
                         new
                         {
-                            Id = new Guid("fa31004c-59db-4a7a-acce-259376cfd9d5"),
+                            Id = new Guid("e49a4f92-4367-4d31-b032-ce14e69f76e0"),
                             Name = "Speech therapist"
                         },
                         new
                         {
-                            Id = new Guid("eccf7b2c-5b39-451b-bd6d-2f168d01f4d6"),
+                            Id = new Guid("54936431-aaf6-4dbc-99a7-cf4e20cb7ece"),
                             Name = "Clinical psychologist"
                         },
                         new
                         {
-                            Id = new Guid("ecad484c-39b9-412b-9e1f-3ada69f3ce91"),
+                            Id = new Guid("0c0abce8-742b-414d-b13b-c7388c9089ac"),
                             Name = "Group therapist"
                         },
                         new
                         {
-                            Id = new Guid("77b1b8bb-02dc-4d0e-bbe4-e648ae78fc41"),
+                            Id = new Guid("2c1cde82-e26f-4948-8785-c735c451d38c"),
                             Name = "Family therapist"
                         },
                         new
                         {
-                            Id = new Guid("f189639b-76c3-4a9e-9049-aba937485a66"),
+                            Id = new Guid("c93bb798-c580-4f96-a007-718003ff834e"),
                             Name = "Psychotherapist"
                         });
                 });
@@ -640,9 +643,6 @@ namespace PatientManagementApp.Web.Data.Migrations
             modelBuilder.Entity("PatientManagementApp.Data.Models.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<Guid>("PractitionerId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
@@ -799,7 +799,7 @@ namespace PatientManagementApp.Web.Data.Migrations
             modelBuilder.Entity("PatientManagementApp.Data.Models.Practitioner", b =>
                 {
                     b.HasOne("PatientManagementApp.Data.Models.ApplicationUser", "User")
-                        .WithOne("Practitioner")
+                        .WithOne()
                         .HasForeignKey("PatientManagementApp.Data.Models.Practitioner", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -861,12 +861,6 @@ namespace PatientManagementApp.Web.Data.Migrations
             modelBuilder.Entity("PatientManagementApp.Data.Models.Specialty", b =>
                 {
                     b.Navigation("PractitionersSpecialties");
-                });
-
-            modelBuilder.Entity("PatientManagementApp.Data.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Practitioner")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

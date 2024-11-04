@@ -11,7 +11,9 @@ namespace PatientManagementApp.Data.Models
     public class ApplicationUser : IdentityUser
     {
 
-       
+        public Guid PractitionerId { get; set; }
+        public virtual Practitioner Practitioner { get; set; } = null!;
+
 
 
     }

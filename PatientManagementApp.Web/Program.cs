@@ -21,17 +21,16 @@ namespace PatientManagementApp.Web
             
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            
-
+            //Identity
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
             builder.Services.AddControllersWithViews();
@@ -66,52 +65,50 @@ namespace PatientManagementApp.Web
 
             using (var scope = app.Services.CreateScope())
             {
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                // Ensure the database is created (necessary if it hasn't been initialized yet)
+                await context.Database.EnsureCreatedAsync();
+
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
 
-                //seeding roles 
-                var roles = new[] { "Admin", "User", "Client" };
+                ////seeding roles 
+                //var roles = new[] { "Admin", "User", "Client" };
 
-                foreach (var role in roles)
-                {
-                    if (!await roleManager.RoleExistsAsync(role))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(role));
-                    }
-                }
+                //foreach (var role in roles)
+                //{
+                //    if (!await roleManager.RoleExistsAsync(role))
+                //    {
+                //        await roleManager.CreateAsync(new IdentityRole(role));
+                //    }
+                //}
 
-            }
-
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-                string email = "admin@admin.com";
-                string password = "Admin123!";
-
-                if (await userManager.FindByEmailAsync(email) == null)
-                {
-                    var user = new ApplicationUser
-                    {
-                        Email = email,
-                        UserName = email
-                    };
-
-                    await userManager.CreateAsync(user, password);
-
-                    //assign a role to the account
-                    await userManager.AddToRoleAsync(user, "Admin");
-                }
-            }
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 await context.SeedData(scope.ServiceProvider);
             }
 
 
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            //    string email = "admin@admin.com";
+            //    string password = "Admin123!";
+
+            //    if (await userManager.FindByEmailAsync(email) == null)
+            //    {
+            //        var user = new ApplicationUser
+            //        {
+            //            Email = email,
+            //            UserName = email
+            //        };
+
+            //        await userManager.CreateAsync(user, password);
+
+            //        //assign a role to the account
+            //        await userManager.AddToRoleAsync(user, "Admin");
+            //    }
+            //}
 
             app.Run();
         }

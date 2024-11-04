@@ -10,10 +10,10 @@ namespace PatientManagementApp.Data.Models
     {
         public Guid PractitionerId { get; set; }
         [ForeignKey(nameof(PractitionerId))]
-        public Practitioner Practitioner { get; set; } = null!;
+        public virtual Practitioner Practitioner { get; set; } = null!;
 
         public Guid SpecialtyId { get; set; }
         [ForeignKey(nameof(SpecialtyId))]
-        public Specialty Specialty { get; set; } = null!;
+        public virtual Specialty Specialty { get; set; } = null!;
     }
 }

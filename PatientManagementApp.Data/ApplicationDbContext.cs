@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Reflection.Emit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -37,26 +38,49 @@ namespace PatientManagementApp.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            builder.Entity<IdentityUserLogin<string>>().HasNoKey();
-            builder.Entity<IdentityUserRole<string>>().HasNoKey();
-            builder.Entity<IdentityUserToken<string>>().HasNoKey();
         }
 
 
         public async Task SeedData(IServiceProvider serviceProvider)
         {
+            Console.WriteLine("Starting SeedData method...");
+
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            // Seed practitioners as users
-            if (!await userManager.Users.AnyAsync())
+            var existingUsers = Users.ToList();
+            if (existingUsers.Any())
             {
+                Console.WriteLine("Removing existing users and practitioners...");
+                Users.RemoveRange(existingUsers);
+                Practitioners.RemoveRange(Practitioners);
+                await SaveChangesAsync();
+            }
+
+            // Seed roles
+            var roles = new[] { "Admin", "User", "Client" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    Console.WriteLine($"Creating role: {role}");
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+
+
+            // Seed practitioners as users
+
+            Console.WriteLine("Seeding practitioners...");
+
                 var practitioners = new[]
                 {
-                    new { Email = "practitioner1@example.com", FirstName = "Ivan", LastName = "Ivanov" },
-                    new { Email = "practitioner2@example.com", FirstName = "Dimitar", LastName = "Dimitrov" },
+                    new { Email = "practitioner1@example.com", FirstName = "Ivan", LastName = "Ivanov", Phone = "08888888888" },
+                    new { Email = "practitioner2@example.com", FirstName = "Dimitar", LastName = "Dimitrov", Phone = "+1949232323" },
                 };
 
                 foreach (var practitionerData in practitioners)
@@ -67,7 +91,7 @@ namespace PatientManagementApp.Data
                     {
                         // Create ApplicationUser
                         user = new ApplicationUser { UserName = practitionerData.Email, Email = practitionerData.Email };
-                        var result = await userManager.CreateAsync(user, "Password@123"); // Set a strong password
+                        var result = await userManager.CreateAsync(user, "Password@123");
 
                         if (result.Succeeded)
                         {
@@ -80,16 +104,23 @@ namespace PatientManagementApp.Data
                                 Id = Guid.NewGuid(),
                                 FirstName = practitionerData.FirstName,
                                 LastName = practitionerData.LastName,
+                                Phone = practitionerData.Phone,
                                 UserId = user.Id // Link to ApplicationUser ID
                             };
 
                             Practitioners.Add(practitioner);
+                            Console.WriteLine($"Added practitioner: {practitioner.FirstName} {practitioner.LastName}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed to create user {practitionerData.Email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                         }
                     }
                 }
-            }
+            
 
             await SaveChangesAsync();
+            Console.WriteLine("Finished seeding data.");
         }
 
     }
