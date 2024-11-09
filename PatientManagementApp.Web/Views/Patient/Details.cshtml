@@ -1,0 +1,33 @@
+﻿
+@{
+}
+
+@using PatientManagementApp.Web.ViewModels.PatientViewModels
+@model PatientDetailsViewModel
+
+<h2>@Model.FirstName @Model.LastName</h2>
+
+<p><strong>Age:</strong> @Model.Age</p>
+<p><strong>Gender:</strong> @Model.Gender</p>
+
+<h3>Treatment</h3>
+<p><strong>Status:</strong> @Model.Status</p>
+@* <p><strong>Treatment Start:</strong> @Model.TreatmentStartDate.ToString("dd.mm.yyyy")</p> *@
+<p><strong>Referred by:</strong> @Model.ReferredBy</p>
+<p><strong>Reason for visit:</strong> @Model.ReasonForVisit</p>
+
+<p><strong>Important information:</strong> @Model.ImportantInfo</p>
+<p><strong>Diagnosis:</strong> @Model.Diagnoses</p>
+<p><strong>Medication:</strong> @Model.PatientsMedications</p>
+
+<h3>Patient Contacts</h3>
+<p><strong>Phone:</strong> @Model.PhoneNumber</p>
+<p><strong>Email:</strong> @Model.Email</p>
+
+<h3>Emergency Contact</h3>
+<p><strong>Name:</strong> @Model.EmergencyContactName</p>
+<p><strong>Phone:</strong> @Model.EmergencyContactPhoneNumber</p>
+<p><strong>Relation:</strong> @Model.EmergencyContactRelationship</p>
+
+<a asp-action="Index" class="btn btn-primary">Back to All Patients</a>
+

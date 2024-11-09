@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PatientManagementApp.Common;
@@ -18,7 +14,7 @@ namespace PatientManagementApp.Data.Configuration
                 .HasOne(p => p.User)
                 .WithOne(u => u.Practitioner)
                 .HasForeignKey<Practitioner>(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
         }
 

@@ -13,7 +13,7 @@ namespace PatientManagementApp.Data.Models
         public Guid Id { get; set; } = Guid.NewGuid();
 
         // Foreign Key to link Practitioner to ApplicationUser
-        public string UserId { get; set; } = null!;
+        public Guid UserId { get; set; } 
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser User { get; set; } = null!;
 

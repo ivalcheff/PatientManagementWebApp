@@ -21,11 +21,22 @@ namespace PatientManagementApp.Common
             public const int PatientImportantInfoMinLength = 5;
             public const int PatientImportantInfoMaxLength = 200;
 
+            public const int ReasonForVisitMinLength = 5;
+            public const int ReasonForVisitMaxLength = 200;
+
+            public const int ReferredByMinLength = 2;
+            public const int ReferredByMaxLength = 50;
+
+            public const int FeedbackMinLength = 3;
+            public const int FeedbackMaxLength = 500;
+
+            public const string DateFormat = "dd.mm.yyyy";
         }
 
 
         public static class Appointment
         {
+            public const int AppointmentDescriptionMinLength = 2;
             public const int AppointmentDescriptionMaxLength = 200;
 
         }

@@ -8,7 +8,7 @@ using PatientManagementApp.Data.Models;
 
 namespace PatientManagementApp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
 
         public ApplicationDbContext()
@@ -22,8 +22,16 @@ namespace PatientManagementApp.Data
 
         }
 
+        
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        }
         public virtual DbSet<Appointment> Appointments { get; set; } = null!;
-        public virtual DbSet<Diagnosis> Diagnoses { get; set; } = null!; 
+        public virtual DbSet<Diagnosis> Diagnoses { get; set; } = null!;
         public virtual DbSet<Patient> Patients { get; set; } = null!;
         public virtual DbSet<EmergencyContact> EmergencyContacts { get; set; } = null!;
         public virtual DbSet<Practitioner> Practitioners { get; set; } = null!;
@@ -35,31 +43,19 @@ namespace PatientManagementApp.Data
         public virtual DbSet<PatientsMedications> PatientsMedications { get; set; } = null!;
         public virtual DbSet<PractitionersSpecialties> PractitionersSpecialties { get; set; } = null!;
 
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-
-            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-        }
-
-
         public async Task SeedData(IServiceProvider serviceProvider)
         {
-            Console.WriteLine("Starting SeedData method...");
 
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            var existingUsers = Users.ToList();
-            if (existingUsers.Any())
-            {
-                Console.WriteLine("Removing existing users and practitioners...");
-                Users.RemoveRange(existingUsers);
-                Practitioners.RemoveRange(Practitioners);
-                await SaveChangesAsync();
-            }
+            //var existingUsers = Users.ToList();
+            //if (existingUsers.Any())
+            //{
+            //    Users.RemoveRange(existingUsers);
+            //    Practitioners.RemoveRange(Practitioners);
+            //    await SaveChangesAsync();
+            //}
 
             // Seed roles
             var roles = new[] { "Admin", "User", "Client" };
@@ -67,7 +63,6 @@ namespace PatientManagementApp.Data
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    Console.WriteLine($"Creating role: {role}");
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
             }
@@ -85,7 +80,7 @@ namespace PatientManagementApp.Data
 
                 foreach (var practitionerData in practitioners)
                 {
-                    // Check if the practitioner user already exists
+                    // Check if the user already exists
                     var user = await userManager.FindByEmailAsync(practitionerData.Email);
                     if (user == null)
                     {
@@ -109,7 +104,6 @@ namespace PatientManagementApp.Data
                             };
 
                             Practitioners.Add(practitioner);
-                            Console.WriteLine($"Added practitioner: {practitioner.FirstName} {practitioner.LastName}");
                         }
                         else
                         {
@@ -120,7 +114,6 @@ namespace PatientManagementApp.Data
             
 
             await SaveChangesAsync();
-            Console.WriteLine("Finished seeding data.");
         }
 
     }

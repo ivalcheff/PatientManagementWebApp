@@ -1,0 +1,37 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model IEnumerable<PatientManagementApp.Data.Models.Patient>
+
+<h2>All Patients</h2>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td>@p.FirstName</td>
+            <td>@p.LastName</td>
+            <td>@p.Age</td>
+            <td>@p.Status</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-info">Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Add New Patient</a>

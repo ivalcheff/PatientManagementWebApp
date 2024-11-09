@@ -1,0 +1,50 @@
+﻿@{
+
+}
+@using PatientManagementApp.Web.ViewModels.PatientViewModels
+
+@model CreatePatientViewModel
+
+<h2>Add a New Patient</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label for="FirstName">First Name</label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName"></span>
+    </div>
+    <div>
+        <label for="LastName">Last Name</label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName"></span>
+    </div>
+    <div>
+        <label for="Email">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div>
+        <label for="TreatmentStartDate">Treatment Start Date</label>
+        <input asp-for="TreatmentStartDate" type="month" class="form-control" />
+        <span asp-validation-for="TreatmentStartDate"></span>    
+    </div>
+    <div>
+        <label for="ReasonForVisit">Initial Reason for Visit</label>
+        <input asp-for="ReasonForVisit" class="form-control" />
+        <span asp-validation-for="ReasonForVisit"></span>
+    </div>
+    <div>
+        <label for="ReferredBy">Referred by</label>
+        <input asp-for="ReferredBy" class="form-control" />
+        <span asp-validation-for="ReferredBy"></span>
+    </div>
+    <div>
+        <label for="ImportantInfo">Important Information About Patient</label>
+        <textarea asp-for="ImportantInfo" class="form-control"></textarea>
+        <span asp-validation-for="ImportantInfo"></span>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Add New Patient</button>
+</form>
+
+<a asp-action="Index">Back to Patients List</a>
+

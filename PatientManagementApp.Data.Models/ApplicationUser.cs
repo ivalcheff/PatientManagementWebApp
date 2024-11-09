@@ -8,13 +8,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace PatientManagementApp.Data.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser<Guid>
     {
 
         public Guid PractitionerId { get; set; }
         public virtual Practitioner Practitioner { get; set; } = null!;
 
-
+        //TODO add a Patient User:
+        //public Guid PatientId { get; set; }
+        //public virtual Patient? Patient { get; set; }
+        //set the Practitioner to a nullable variable
 
     }
 }

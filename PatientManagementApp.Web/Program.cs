@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
@@ -22,18 +23,20 @@ namespace PatientManagementApp.Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             //Identity
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddRoles<IdentityRole<Guid>>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
             var app = builder.Build();
 
@@ -70,19 +73,8 @@ namespace PatientManagementApp.Web
                 // Ensure the database is created (necessary if it hasn't been initialized yet)
                 await context.Database.EnsureCreatedAsync();
 
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-
-                ////seeding roles 
-                //var roles = new[] { "Admin", "User", "Client" };
-
-                //foreach (var role in roles)
-                //{
-                //    if (!await roleManager.RoleExistsAsync(role))
-                //    {
-                //        await roleManager.CreateAsync(new IdentityRole(role));
-                //    }
-                //}
 
                 await context.SeedData(scope.ServiceProvider);
             }

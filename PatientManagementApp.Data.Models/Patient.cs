@@ -24,12 +24,13 @@ namespace PatientManagementApp.Data.Models
         [Comment("Patient's last name")]
         public string LastName { get; set; } = null!;
 
-
+        [Required]
         [MaxLength(PhoneMaxLength)]
         [Comment("Patient's phone number")]
         public string PhoneNumber { get; set; } = null!;
 
         [Comment("The patient's email address")]
+        [MaxLength(EmailMaxLength)]
         public string? Email { get; set; }
 
 
@@ -44,7 +45,7 @@ namespace PatientManagementApp.Data.Models
         [Comment("Patient's gender")]
         public Gender Gender { get; set; }
 
-
+        [Required]
         [Comment("The first date of the treatment")]
         public DateTime TreatmentStartDate { get; set; }
 
