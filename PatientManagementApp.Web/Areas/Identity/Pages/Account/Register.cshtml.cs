@@ -29,23 +29,23 @@ namespace PatientManagementApp.Web.Areas.Identity.Pages.Account
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        //private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            //IEmailSender emailSender,
+            RoleManager<IdentityRole<Guid>> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            //_emailSender = emailSender;
             _roleManager = roleManager;
         }
 
@@ -56,8 +56,8 @@ namespace PatientManagementApp.Web.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        [BindProperty]
-        public string UserType { get; set; } // Holds "Practitioner" or "Patient" from the form
+        //[BindProperty]
+        //public string UserType { get; set; } // Holds "Practitioner" or "Patient" from the form
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -106,8 +106,8 @@ namespace PatientManagementApp.Web.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
 
-            [BindProperty]
-            public string UserType { get; set; } // Holds "Practitioner" or "Patient" from the form
+            //[BindProperty]
+            //public string UserType { get; set; } // Holds "Practitioner" or "Patient" from the form
 
         }
 
@@ -147,8 +147,8 @@ namespace PatientManagementApp.Web.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                       // $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

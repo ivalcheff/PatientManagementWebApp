@@ -45,29 +45,31 @@ namespace PatientManagementApp.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreatePatientViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return this.View(model);
-            }
-
-            bool isTreatmentStartDateValid = DateTime.TryParseExact(model.TreatmentStartDate, "dd-mm-yyyy",
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user?.Id;
+            
+            bool isTreatmentStartDateValid = DateTime.TryParseExact(model.TreatmentStartDate, ModelValidationConstraints.Global.DateFormat,
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime treatmentStartDate);
 
             if (!isTreatmentStartDateValid)
             {
-                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), $"The date should be in the following format:{DateFormat}");
+                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), $"The date should be in the following format: {ModelValidationConstraints.Global.DateFormat}");
                 return this.View(model);
             }
 
-            bool isDateOfBirthValid = DateTime.TryParseExact(model.DateOfBirth, "dd-mm-yyyy",
+            bool isDateOfBirthValid = DateTime.TryParseExact(model.DateOfBirth, ModelValidationConstraints.Global.DateFormat,
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
 
             if (!isDateOfBirthValid)
             {
-                this.ModelState.AddModelError(nameof(model.DateOfBirth), $"The date should be in the following format:{DateFormat}");
+                this.ModelState.AddModelError(nameof(model.DateOfBirth), $"The date should be in the following format:{ModelValidationConstraints.Global.DateFormat}");
                 return this.View(model);
             }
 
+            if (!ModelState.IsValid)
+            {
+                return this.View(model);
+            }
 
             Patient patient = new Patient()
             {
@@ -76,6 +78,9 @@ namespace PatientManagementApp.Web.Controllers
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email,
                 BirthDate = dateOfBirth,
+                Age = model.Age,
+                //TODO add gender as enum
+                //TODO add diagnoses
                 TreatmentStartDate = dateOfBirth,
                 ReasonForVisit = model.ReasonForVisit,
                 ReferredBy = model.ReferredBy,
@@ -88,7 +93,7 @@ namespace PatientManagementApp.Web.Controllers
                 }, 
                 Status = Enums.PatientStatus.Active,
                 IsActive = true,
-                //PractitionerId = this.User.
+                PractitionerId = (Guid)userId,
 
             };
 
@@ -131,9 +136,9 @@ namespace PatientManagementApp.Web.Controllers
                 Gender = patient.Gender,
                 Email = patient.Email,
                 PhoneNumber = patient.PhoneNumber,
-                DateOfBirth = patient.BirthDate.ToString(DateFormat),
-                TreatmentStartDate = patient.TreatmentStartDate.ToString(DateFormat),
-                TreatmentEndDate = patient.TreatmentEndDate.ToString(DateFormat),
+                DateOfBirth = patient.BirthDate.ToString(ModelValidationConstraints.Global.DateFormat),
+                TreatmentStartDate = patient.TreatmentStartDate.ToString(ModelValidationConstraints.Global.DateFormat),
+                TreatmentEndDate = patient.TreatmentEndDate.ToString(ModelValidationConstraints.Global.DateFormat),
                 ReasonForVisit = patient.ReasonForVisit,
                 ReferredBy = patient.ReferredBy,
                 ImportantInfo = patient.ImportantInfo,

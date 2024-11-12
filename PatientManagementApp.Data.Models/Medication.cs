@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using static PatientManagementApp.Common.ModelValidationConstraints.Medication;
 
@@ -26,6 +27,7 @@ namespace PatientManagementApp.Data.Models
         public string Producer { get; set; } = null!;
 
         [Required]
+        [Column(TypeName = "decimal(10, 2)")]
         [Comment("The dosage per day")]
         public decimal Dosage { get; set; }
 

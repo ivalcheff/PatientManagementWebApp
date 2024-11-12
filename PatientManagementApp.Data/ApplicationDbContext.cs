@@ -47,7 +47,7 @@ namespace PatientManagementApp.Data
         {
 
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
             //var existingUsers = Users.ToList();
             //if (existingUsers.Any())
@@ -63,14 +63,12 @@ namespace PatientManagementApp.Data
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(new IdentityRole(role));
+                    await roleManager.CreateAsync(new IdentityRole<Guid>(role));
                 }
             }
 
 
             // Seed practitioners as users
-
-            Console.WriteLine("Seeding practitioners...");
 
                 var practitioners = new[]
                 {
@@ -96,11 +94,10 @@ namespace PatientManagementApp.Data
                             // Create and link Practitioner entity
                             var practitioner = new Practitioner
                             {
-                                Id = Guid.NewGuid(),
+                                Id = user.Id,
                                 FirstName = practitionerData.FirstName,
                                 LastName = practitionerData.LastName,
                                 Phone = practitionerData.Phone,
-                                UserId = user.Id // Link to ApplicationUser ID
                             };
 
                             Practitioners.Add(practitioner);

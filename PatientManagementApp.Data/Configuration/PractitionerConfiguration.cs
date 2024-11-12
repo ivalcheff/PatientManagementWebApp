@@ -12,8 +12,8 @@ namespace PatientManagementApp.Data.Configuration
         {
             builder
                 .HasOne(p => p.User)
-                .WithOne(u => u.Practitioner)
-                .HasForeignKey<Practitioner>(p => p.UserId)
+                .WithOne()
+                .HasForeignKey<Practitioner>(p => p.Id)
                 .OnDelete(DeleteBehavior.NoAction);
 
         }

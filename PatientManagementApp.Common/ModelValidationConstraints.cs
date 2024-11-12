@@ -4,13 +4,10 @@ namespace PatientManagementApp.Common
 {
     public static class ModelValidationConstraints
     {
-        public static class Patient
-        {
-            public const int PatientFirstNameMinLength = 2;
-            public const int PatientFirstNameMaxLength = 50;
 
-            public const int PatientLastNameMinLength = 2;
-            public const int PatientLastNameMaxLength = 80;
+        public static class Global
+        {
+            public const string DateFormat = "dd.mm.yyyy";
 
             public const int EmailMinLength = 10;
             public const int EmailMaxLength = 50;
@@ -18,6 +15,16 @@ namespace PatientManagementApp.Common
             public const int PhoneMinLength = 6;
             public const int PhoneMaxLength = 15;
 
+            public const int FirstNameMinLength = 2;
+            public const int FirstNameMaxLength = 50;
+
+            public const int LastNameMinLength = 2;
+            public const int LastNameMaxLength = 80;
+
+        }
+
+        public static class Patient
+        {
             public const int PatientImportantInfoMinLength = 5;
             public const int PatientImportantInfoMaxLength = 200;
 
@@ -29,8 +36,6 @@ namespace PatientManagementApp.Common
 
             public const int FeedbackMinLength = 3;
             public const int FeedbackMaxLength = 500;
-
-            public const string DateFormat = "dd.mm.yyyy";
         }
 
 
@@ -57,9 +62,6 @@ namespace PatientManagementApp.Common
             public const int EmergencyContactNameMaxLength = 200;
             public const int EmergencyContactRelationshipMinLength = 2;
             public const int EmergencyContactRelationshipMaxLength = 50;
-            public const int PhoneMinLength = 6;
-            public const int PhoneMaxLength = 15;
-
         }
 
         public static class Note
@@ -80,27 +82,11 @@ namespace PatientManagementApp.Common
             public const int MedicationDescriptionMaxLength = 500;
         }
 
-        public static class Practitioner
-        {
-            public const int PractitionerFirstNameMinLength = 2;
-            public const int PractitionerFirstNameMaxLength = 50;
-
-            public const int PractitionerLastNameMinLength = 20;
-            public const int PractitionerLastNameMaxLength = 50;
-
-            public const int PhoneMinLength = 6;
-            public const int PhoneMaxLength = 15;
-
-            public const int EmailMinLength = 10;
-            public const int EmailMaxLength = 50;
-
-        }
-
+        
         public static class Specialty
         {
             public const int SpecialtyNameMinLength = 3;
             public const int SpecialtyNameMaxLength = 200;
-
         }
 
         public static class FileUpload

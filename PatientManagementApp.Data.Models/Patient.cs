@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using static PatientManagementApp.Common.Enums;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
 
 namespace PatientManagementApp.Data.Models
@@ -14,13 +15,13 @@ namespace PatientManagementApp.Data.Models
 
 
         [Required]
-        [MaxLength(PatientFirstNameMaxLength)]
+        [MaxLength(FirstNameMaxLength)]
         [Comment("Patient's first name")]
         public string FirstName { get; set; } = null!;
 
 
         [Required]
-        [MaxLength(PatientLastNameMaxLength)]
+        [MaxLength(LastNameMaxLength)]
         [Comment("Patient's last name")]
         public string LastName { get; set; } = null!;
 
@@ -53,14 +54,16 @@ namespace PatientManagementApp.Data.Models
         [Comment("Final date of the treatment")]
         public DateTime TreatmentEndDate { get; set; }
 
-
+        [MaxLength(ReasonForVisitMaxLength)]
         [Comment("Initial reason for visiting")]
         public string? ReasonForVisit { get; set; }
 
 
+        [MaxLength(ReferredByMaxLength)]
         [Comment("Who referred this patient")]
         public string? ReferredBy { get; set; }
 
+        [MaxLength(FeedbackMaxLength)]
         [Comment("Feedback from patient regarding the treatment")]
         public string? Feedback { get; set; }
         

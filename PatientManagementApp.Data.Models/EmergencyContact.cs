@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using static PatientManagementApp.Common.ModelValidationConstraints.EmergencyContact;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
+
 
 namespace PatientManagementApp.Data.Models
 {

@@ -1,23 +1,31 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
-
+using PatientManagementApp.Common;
 using static PatientManagementApp.Common.Enums;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
+using static PatientManagementApp.Common.ModelValidationConstraints.EmergencyContact;
+
 
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
     public class CreatePatientViewModel
     {
+        public CreatePatientViewModel()
+        {
+            this.TreatmentStartDate = DateTime.UtcNow.ToString(ModelValidationConstraints.Global.DateFormat);
+        }
+
         [Required]
-        [MinLength(PatientFirstNameMinLength)]
-        [MaxLength(PatientFirstNameMaxLength)]
+        [MinLength(FirstNameMinLength)]
+        [MaxLength(FirstNameMaxLength)]
 
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [MinLength(PatientLastNameMinLength)]
-        [MaxLength(PatientLastNameMaxLength)]
+        [MinLength(LastNameMinLength)]
+        [MaxLength(LastNameMaxLength)]
         public string LastName { get; set; } = null!;
 
         [MaxLength(EmailMaxLength)]
@@ -29,11 +37,15 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [MaxLength(PhoneMaxLength)]
         public string PhoneNumber { get; set; } = null!;
 
+        public string? DateOfBirth { get; set; }
+
+        public int Age { get; set; }
+
+        //TODO add Gender
 
         [Required] 
-        public string TreatmentStartDate { get; set; } = null!;
+        public string TreatmentStartDate { get; set; }
 
-        public string? DateOfBirth { get; set; }
 
         [MinLength(ReasonForVisitMinLength)]
         [MaxLength(ReasonForVisitMaxLength)]
@@ -49,8 +61,16 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         public string ImportantInfo { get; set; } = null!;
 
         //Emergency contact info
+        [MinLength(EmergencyContactNameMinLength)]
+        [MaxLength(EmergencyContactNameMaxLength)]
         public string? EmergencyContactName { get; set; }
+
+        [MinLength(PhoneMinLength)]
+        [MaxLength(PhoneMaxLength)]
         public string? EmergencyContactPhone { get; set; }
+
+        [MinLength(EmergencyContactRelationshipMinLength)]
+        [MaxLength(EmergencyContactRelationshipMaxLength)]
         public string? EmergencyContactRelationship { get; set; }
 
     }

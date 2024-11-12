@@ -73,34 +73,11 @@ namespace PatientManagementApp.Web
                 // Ensure the database is created (necessary if it hasn't been initialized yet)
                 await context.Database.EnsureCreatedAsync();
 
-                //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
 
                 await context.SeedData(scope.ServiceProvider);
             }
-
-
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-            //    string email = "admin@admin.com";
-            //    string password = "Admin123!";
-
-            //    if (await userManager.FindByEmailAsync(email) == null)
-            //    {
-            //        var user = new ApplicationUser
-            //        {
-            //            Email = email,
-            //            UserName = email
-            //        };
-
-            //        await userManager.CreateAsync(user, password);
-
-            //        //assign a role to the account
-            //        await userManager.AddToRoleAsync(user, "Admin");
-            //    }
-            //}
 
             app.Run();
         }

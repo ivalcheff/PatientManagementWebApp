@@ -2,28 +2,24 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using static PatientManagementApp.Common.ModelValidationConstraints.Practitioner;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
 
 namespace PatientManagementApp.Data.Models
 {
     public class Practitioner
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
-        // Foreign Key to link Practitioner to ApplicationUser
-        public Guid UserId { get; set; } 
-        [ForeignKey(nameof(UserId))]
+        [Key, ForeignKey(nameof(User))]
+        public Guid Id { get; set; } 
         public virtual ApplicationUser User { get; set; } = null!;
 
         [Required]
-        [MaxLength(PractitionerFirstNameMaxLength)]
+        [MaxLength(FirstNameMaxLength)]
         [Comment("Practitioner's first name")]
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [MaxLength(PractitionerLastNameMaxLength)]
+        [MaxLength(LastNameMaxLength)]
         [Comment("Practitioner's last name")]
         public string LastName { get; set; } = null!;
 
