@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PatientManagementApp.Data.Models;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace PatientManagementApp.Data
 {
@@ -45,7 +46,8 @@ namespace PatientManagementApp.Data
 
         public async Task SeedData(IServiceProvider serviceProvider)
         {
-
+            using var scope = serviceProvider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
@@ -108,7 +110,24 @@ namespace PatientManagementApp.Data
                         }
                     }
                 }
-            
+
+            //Seed Specialties
+            if (!context.Specialties.Any())
+            {
+                var specialties = new List<Specialty>
+                {
+                    new Specialty { Id = Guid.NewGuid(), Name = "Psychiatrist" },
+                    new Specialty { Id = Guid.NewGuid(), Name = "Psychologist" },
+                    new Specialty { Id = Guid.NewGuid(), Name = "Hypnotherapist" },
+                    new Specialty { Id = Guid.NewGuid(), Name = "Speech therapist" },
+                    new Specialty { Id = Guid.NewGuid(), Name = "Clinical psychologist" },
+                    new Specialty { Id = Guid.NewGuid(), Name = "Group therapist" },
+                    new Specialty { Id = Guid.NewGuid(), Name = "Family therapist" },
+                    new Specialty { Id = Guid.NewGuid(), Name = "Psychotherapist" }
+                };
+
+                await context.Specialties.AddRangeAsync(specialties);
+            }
 
             await SaveChangesAsync();
         }

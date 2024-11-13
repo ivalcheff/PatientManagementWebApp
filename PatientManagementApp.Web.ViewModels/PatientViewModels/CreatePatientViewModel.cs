@@ -5,7 +5,7 @@ using static PatientManagementApp.Common.Enums;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
 using static PatientManagementApp.Common.ModelValidationConstraints.EmergencyContact;
-
+using static PatientManagementApp.Common.EntityValidationMessages;
 
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
@@ -17,13 +17,13 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
             this.TreatmentStartDate = DateTime.UtcNow.ToString(ModelValidationConstraints.Global.DateFormat);
         }
 
-        [Required]
+        [Required(ErrorMessage = FirstNameIsRequired)]
         [MinLength(FirstNameMinLength)]
         [MaxLength(FirstNameMaxLength)]
 
         public string FirstName { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = LastNameIsRequired)]
         [MinLength(LastNameMinLength)]
         [MaxLength(LastNameMaxLength)]
         public string LastName { get; set; } = null!;
@@ -32,7 +32,7 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [MinLength(EmailMinLength)]
         public string? Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = PhoneIsRequired)]
         [MinLength(PhoneMinLength)]
         [MaxLength(PhoneMaxLength)]
         public string PhoneNumber { get; set; } = null!;

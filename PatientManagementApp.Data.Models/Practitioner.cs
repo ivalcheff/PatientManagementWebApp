@@ -13,20 +13,17 @@ namespace PatientManagementApp.Data.Models
         public Guid Id { get; set; } 
         public virtual ApplicationUser User { get; set; } = null!;
 
-        [Required]
         [MaxLength(FirstNameMaxLength)]
         [Comment("Practitioner's first name")]
-        public string FirstName { get; set; } = null!;
+        public string? FirstName { get; set; }
 
-        [Required]
         [MaxLength(LastNameMaxLength)]
         [Comment("Practitioner's last name")]
-        public string LastName { get; set; } = null!;
+        public string? LastName { get; set; } 
 
-        [Required]
         [MaxLength(PhoneMaxLength)]
         [Comment("Practitioner's phone number")]
-        public string Phone { get; set; } = null!;
+        public string? Phone { get; set; } 
 
         [Required]
         [Comment("Whether the practitioner has online consultations with patients")]
