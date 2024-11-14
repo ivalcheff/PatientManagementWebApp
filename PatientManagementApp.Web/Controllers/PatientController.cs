@@ -10,12 +10,14 @@ using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Web.ViewModels.PatientViewModels;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
 
 namespace PatientManagementApp.Web.Controllers
 {
     [Authorize]
-    public class PatientController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager) : BaseController
+    public class PatientController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
+        : BaseController
     {
 
         private readonly ApplicationDbContext _dbContext = dbContext;
@@ -47,22 +49,24 @@ namespace PatientManagementApp.Web.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             var userId = user?.Id;
-            
-            bool isTreatmentStartDateValid = DateTime.TryParseExact(model.TreatmentStartDate, ModelValidationConstraints.Global.DateFormat,
+
+            bool isTreatmentStartDateValid = DateTime.TryParseExact(model.TreatmentStartDate,DateFormat,
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime treatmentStartDate);
 
             if (!isTreatmentStartDateValid)
             {
-                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), $"The date should be in the following format: {ModelValidationConstraints.Global.DateFormat}");
+                this.ModelState.AddModelError(nameof(model.TreatmentStartDate),
+                    $"The date should be in the following format: {DateFormat}");
                 return this.View(model);
             }
 
-            bool isDateOfBirthValid = DateTime.TryParseExact(model.DateOfBirth, ModelValidationConstraints.Global.DateFormat,
+            bool isDateOfBirthValid = DateTime.TryParseExact(model.DateOfBirth, DateFormat,
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
 
             if (!isDateOfBirthValid)
             {
-                this.ModelState.AddModelError(nameof(model.DateOfBirth), $"The date should be in the following format:{ModelValidationConstraints.Global.DateFormat}");
+                this.ModelState.AddModelError(nameof(model.DateOfBirth),
+                    $"The date should be in the following format:{DateFormat}");
                 return this.View(model);
             }
 
@@ -90,7 +94,7 @@ namespace PatientManagementApp.Web.Controllers
                     Name = model.EmergencyContactName,
                     PhoneNumber = model.EmergencyContactPhone,
                     Relationship = model.EmergencyContactRelationship
-                }, 
+                },
                 Status = Enums.PatientStatus.Active,
                 IsActive = true,
                 PractitionerId = (Guid)userId,
@@ -118,40 +122,79 @@ namespace PatientManagementApp.Web.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
 
-            //check if such patient exists
-            Patient? patient = await this._dbContext
-                .Patients
-                .FirstOrDefaultAsync(p => p.Id == patientGuid);
+            var patient = await _dbContext.Patients
+                .Where(p => p.Id == patientGuid)
+                .Where(p => p.IsActive == true)
+                .AsNoTracking()
+                .Select(p => new PatientDetailsViewModel()
+                {
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Age = p.Age,
+                    Gender = p.Gender, //doesn't work great; displays null
+                    Email = p.Email,
+                    PhoneNumber = p.PhoneNumber,
+                    DateOfBirth = p.BirthDate.ToString(DateFormat),
+                    TreatmentStartDate = p.TreatmentStartDate.ToString(DateFormat),
+                    TreatmentEndDate = p.TreatmentEndDate.ToString(DateFormat),
+                    ReasonForVisit = p.ReasonForVisit,
+                    ReferredBy = p.ReferredBy,
+                    ImportantInfo = p.ImportantInfo,
+                    Status = p.Status,
+                    Feedback = p.Feedback,
+                    EmergencyContactName = p.EmergencyContact.Name,
+                    EmergencyContactPhoneNumber = p.EmergencyContact.PhoneNumber,
+                    EmergencyContactRelationship = p.EmergencyContact.Relationship
+                })
+                .FirstOrDefaultAsync();
 
-            if (patient == null)
+
+            return this.View(patient);
+        }
+
+
+        //EDIT PATIENT
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+
+            //check if id is valid
+            Guid patientGuid = Guid.Empty;
+            bool isGuidValid = this.IsGuidValid(id, ref patientGuid);
+
+            if (!isGuidValid)
             {
                 return this.RedirectToAction(nameof(Index));
             }
 
-            PatientDetailsViewModel model = new PatientDetailsViewModel()
-            {
-                FirstName = patient.FirstName,
-                LastName = patient.LastName,
-                Age = patient.Age,
-                Gender = patient.Gender,
-                Email = patient.Email,
-                PhoneNumber = patient.PhoneNumber,
-                DateOfBirth = patient.BirthDate.ToString(ModelValidationConstraints.Global.DateFormat),
-                TreatmentStartDate = patient.TreatmentStartDate.ToString(ModelValidationConstraints.Global.DateFormat),
-                TreatmentEndDate = patient.TreatmentEndDate.ToString(ModelValidationConstraints.Global.DateFormat),
-                ReasonForVisit = patient.ReasonForVisit,
-                ReferredBy = patient.ReferredBy,
-                ImportantInfo = patient.ImportantInfo,
-                Status = patient.Status,
-                Feedback = patient.Feedback,
-                EmergencyContactName = patient.EmergencyContact.Name,
-                EmergencyContactPhoneNumber = patient.EmergencyContact.PhoneNumber,
-                EmergencyContactRelationship = patient.EmergencyContact.Relationship
+            var patient = await _dbContext.Patients
+                .Where(p => p.Id == patientGuid)
+                .Where(p => p.IsActive == true)
+                .AsNoTracking()
+                .Select(p => new PatientDetailsViewModel()
+                {
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Age = p.Age,
+                    Gender = p.Gender,
+                    Email = p.Email,
+                    PhoneNumber = p.PhoneNumber,
+                    DateOfBirth = p.BirthDate.ToString(DateFormat),
+                    TreatmentStartDate = p.TreatmentStartDate.ToString(DateFormat),
+                    TreatmentEndDate = p.TreatmentEndDate.ToString(DateFormat),
+                    ReasonForVisit = p.ReasonForVisit,
+                    ReferredBy = p.ReferredBy,
+                    ImportantInfo = p.ImportantInfo,
+                    Status = p.Status,
+                    Feedback = p.Feedback,
+                    EmergencyContactName = p.EmergencyContact.Name,
+                    EmergencyContactPhoneNumber = p.EmergencyContact.PhoneNumber,
+                    EmergencyContactRelationship = p.EmergencyContact.Relationship
+                })
+                .FirstOrDefaultAsync();
 
-            };
 
-            return this.View(model);
+            return View(patient);
         }
-
     }
 }

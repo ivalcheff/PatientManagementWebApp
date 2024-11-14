@@ -4,7 +4,7 @@ namespace PatientManagementApp.Web.Controllers
 {
     public class BaseController : Controller
     {
-        protected bool IsGuidValid(string id, ref Guid cinemaGuid)
+        protected bool IsGuidValid(string id, ref Guid patientGuid)
         {
             //non-existing parameter in the URL
             if (String.IsNullOrWhiteSpace(id))
@@ -12,8 +12,8 @@ namespace PatientManagementApp.Web.Controllers
                 return false;
             }
 
-            //invalid parameter int he URL
-            bool isGuidValid = Guid.TryParse(id, out cinemaGuid);
+            //invalid parameter in the URL
+            bool isGuidValid = Guid.TryParse(id, out patientGuid);
             if (!isGuidValid)
             {
                 return false;
