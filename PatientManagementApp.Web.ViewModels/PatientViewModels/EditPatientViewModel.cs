@@ -1,22 +1,23 @@
 ﻿
+
 using System.ComponentModel.DataAnnotations;
-using PatientManagementApp.Common;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using static PatientManagementApp.Common.Enums;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
 using static PatientManagementApp.Common.ModelValidationConstraints.EmergencyContact;
 using static PatientManagementApp.Common.EntityValidationMessages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
-    public class CreatePatientViewModel
+    public class EditPatientViewModel
     {
-        public CreatePatientViewModel()
+        public EditPatientViewModel()
         {
             this.TreatmentStartDate = DateTime.Now.ToString(DateFormat);
         }
+
+        public Guid Id { get; set; }
 
         [Required(ErrorMessage = FirstNameIsRequired)]
         [MinLength(FirstNameMinLength)]
@@ -45,16 +46,26 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [Required]
         [Display(Name = "Gender")]
         public Gender Gender { get; set; }
-
+        
         public List<SelectListItem> GenderOptions { get; set; } = new();
-       
+
+
+        //Treatment info
         [Required] 
         public string TreatmentStartDate { get; set; }
+        public string? TreatmentEndDate { get; set; }
 
+        public PatientStatus Status { get; set; }
+        public List<SelectListItem> PatientStatusOptions { get; set; } = new();
 
         [MinLength(ReasonForVisitMinLength)]
         [MaxLength(ReasonForVisitMaxLength)]
         public string? ReasonForVisit { get; set; }
+
+        //TODO add Diagnosis
+
+        //TODO add Medications
+
 
         [MinLength(ReferredByMinLength)]
         [MaxLength(ReferredByMaxLength)]
@@ -65,10 +76,9 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [MaxLength(PatientImportantInfoMaxLength)]
         public string ImportantInfo { get; set; } = null!;
 
-        [Required]
-        public PatientStatus Status { get; set; }
-
-        public List<SelectListItem> PatientStatusOptions { get; set; } = new();
+        [MinLength(FeedbackMinLength)]
+        [MaxLength(FeedbackMaxLength)]
+        public string? Feedback { get; set; }
 
         //Emergency contact info
         [MinLength(EmergencyContactNameMinLength)]
@@ -77,11 +87,10 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 
         [MinLength(PhoneMinLength)]
         [MaxLength(PhoneMaxLength)]
-        public string? EmergencyContactPhone { get; set; }
+        public string? EmergencyContactPhoneNumber { get; set; }
 
         [MinLength(EmergencyContactRelationshipMinLength)]
         [MaxLength(EmergencyContactRelationshipMaxLength)]
         public string? EmergencyContactRelationship { get; set; }
-
     }
 }

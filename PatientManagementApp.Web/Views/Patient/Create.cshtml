@@ -22,6 +22,11 @@
         <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
     <div>
+        <label asp-for="Gender">Gender</label>
+        <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-control"></select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+    <div>
         <label asp-for="PhoneNumber">Phone Number</label>
         <input asp-for="PhoneNumber" class="form-control" />
         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
@@ -62,6 +67,11 @@
         <label asp-for="ReferredBy">Referred by</label>
         <input asp-for="ReferredBy" class="form-control" />
         <span asp-validation-for="ReferredBy" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Status">Status</label>
+        <select asp-for="Status" asp-items="Model.PatientStatusOptions" class="form-control"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
     <br/>
     <p><strong>Emergency contact information</strong> </p>

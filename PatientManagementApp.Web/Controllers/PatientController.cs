@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 using PatientManagementApp.Common;
@@ -11,6 +12,7 @@ using PatientManagementApp.Data.Models;
 using PatientManagementApp.Web.ViewModels.PatientViewModels;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
+using static PatientManagementApp.Common.Enums;
 
 
 namespace PatientManagementApp.Web.Controllers
@@ -19,7 +21,6 @@ namespace PatientManagementApp.Web.Controllers
     public class PatientController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
         : BaseController
     {
-
         private readonly ApplicationDbContext _dbContext = dbContext;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
@@ -30,8 +31,21 @@ namespace PatientManagementApp.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             var userId = user?.Id;
 
-            IEnumerable<Patient> patients = await this._dbContext
+            var patients = await this._dbContext
                 .Patients
+                .Where(p => p.IsActive)
+                .Where(p => p.PractitionerId == userId)
+                .Select(p => new PatientDetailsViewModel()
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Gender = p.Gender,
+                    Age = p.Age,
+                    Status = p.Status,
+                    PhoneNumber = p.PhoneNumber
+                })
+                .AsNoTracking()
                 .ToListAsync();
 
             return View(patients);
@@ -41,7 +55,10 @@ namespace PatientManagementApp.Web.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return this.View();
+            var model = new CreatePatientViewModel();
+            model.GenderOptions = GetGenderOptions();
+            model.PatientStatusOptions = GetStatusOptions();
+            return this.View(model);
         }
 
         [HttpPost]
@@ -83,7 +100,7 @@ namespace PatientManagementApp.Web.Controllers
                 Email = model.Email,
                 BirthDate = dateOfBirth,
                 Age = model.Age,
-                //TODO add gender as enum
+                Gender = model.Gender,
                 //TODO add diagnoses
                 TreatmentStartDate = dateOfBirth,
                 ReasonForVisit = model.ReasonForVisit,
@@ -95,7 +112,7 @@ namespace PatientManagementApp.Web.Controllers
                     PhoneNumber = model.EmergencyContactPhone,
                     Relationship = model.EmergencyContactRelationship
                 },
-                Status = Enums.PatientStatus.Active,
+                Status = model.Status,
                 IsActive = true,
                 PractitionerId = (Guid)userId,
 
@@ -110,69 +127,76 @@ namespace PatientManagementApp.Web.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Details(string? id)
+        public async Task<IActionResult> Details(Guid id)  //does not work
         {
-            //check if id is valid
+            ////check if id is valid
+            //Guid patientGuid = Guid.Empty;
+            //bool isIdValid = this.IsGuidValid(id, ref patientGuid);
 
-            Guid patientGuid = Guid.Empty;
-            bool isGuidValid = this.IsGuidValid(id, ref patientGuid);
+            //if (!isIdValid)
+            //{
+            //    Console.WriteLine("Invalid id");
+            //    return this.RedirectToAction(nameof(Index));
+            //}
 
-            if (!isGuidValid)
+            Patient? patient = await this._dbContext
+                .Patients
+                .Include(p => p.EmergencyContact)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (patient == null)
             {
+                //checks if such a patient exists in db
                 return this.RedirectToAction(nameof(Index));
             }
 
-            var patient = await _dbContext.Patients
-                .Where(p => p.Id == patientGuid)
-                .Where(p => p.IsActive == true)
-                .AsNoTracking()
-                .Select(p => new PatientDetailsViewModel()
-                {
-                    FirstName = p.FirstName,
-                    LastName = p.LastName,
-                    Age = p.Age,
-                    Gender = p.Gender, //doesn't work great; displays null
-                    Email = p.Email,
-                    PhoneNumber = p.PhoneNumber,
-                    DateOfBirth = p.BirthDate.ToString(DateFormat),
-                    TreatmentStartDate = p.TreatmentStartDate.ToString(DateFormat),
-                    TreatmentEndDate = p.TreatmentEndDate.ToString(DateFormat),
-                    ReasonForVisit = p.ReasonForVisit,
-                    ReferredBy = p.ReferredBy,
-                    ImportantInfo = p.ImportantInfo,
-                    Status = p.Status,
-                    Feedback = p.Feedback,
-                    EmergencyContactName = p.EmergencyContact.Name,
-                    EmergencyContactPhoneNumber = p.EmergencyContact.PhoneNumber,
-                    EmergencyContactRelationship = p.EmergencyContact.Relationship
-                })
-                .FirstOrDefaultAsync();
-
-
-            return this.View(patient);
+            var model = new PatientDetailsViewModel()
+            {
+                Id = patient.Id,
+                FirstName = patient.FirstName,
+                LastName = patient.LastName,
+                Age = patient.Age,
+                Gender = patient.Gender, //doesn't work great; displays null
+                Email = patient.Email,
+                PhoneNumber = patient.PhoneNumber,
+                DateOfBirth = patient.BirthDate.ToString(DateFormat) ?? "N/A",
+                TreatmentStartDate = patient.TreatmentStartDate.ToString(DateFormat),
+                TreatmentEndDate = patient.TreatmentEndDate.ToString(DateFormat),
+                ReasonForVisit = patient.ReasonForVisit,
+                ReferredBy = patient.ReferredBy,
+                ImportantInfo = patient.ImportantInfo,
+                Status = patient.Status,
+                Feedback = patient.Feedback,
+                EmergencyContactName = patient.EmergencyContact.Name,
+                EmergencyContactPhoneNumber = patient.EmergencyContact.PhoneNumber,
+                EmergencyContactRelationship = patient.EmergencyContact.Relationship
+            };
+            
+            return this.View(model);
         }
 
 
         //EDIT PATIENT
         [HttpGet]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(Guid id)
         {
+            ////check if id is valid
+            //Guid patientGuid = Guid.Empty;
+            //bool isGuidValid = this.IsGuidValid(id, ref patientGuid);
 
-            //check if id is valid
-            Guid patientGuid = Guid.Empty;
-            bool isGuidValid = this.IsGuidValid(id, ref patientGuid);
-
-            if (!isGuidValid)
-            {
-                return this.RedirectToAction(nameof(Index));
-            }
+            //if (!isGuidValid)
+            //{
+            //    return this.RedirectToAction(nameof(Index));
+            //}
 
             var patient = await _dbContext.Patients
-                .Where(p => p.Id == patientGuid)
+                .Where(p => p.Id == id)
                 .Where(p => p.IsActive == true)
+                .Include(p => p.EmergencyContact)
                 .AsNoTracking()
-                .Select(p => new PatientDetailsViewModel()
+                .Select(p => new EditPatientViewModel()
                 {
+                    Id = p.Id,
                     FirstName = p.FirstName,
                     LastName = p.LastName,
                     Age = p.Age,
@@ -193,8 +217,107 @@ namespace PatientManagementApp.Web.Controllers
                 })
                 .FirstOrDefaultAsync();
 
+            patient.GenderOptions = GetGenderOptions();
+            patient.PatientStatusOptions = GetStatusOptions();
 
             return View(patient);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditPatientViewModel model, Guid id)
+        {
+            if (ModelState.IsValid == false)
+            {
+                model.GenderOptions = GetGenderOptions();
+                model.PatientStatusOptions = GetStatusOptions();
+                return View(model);
+
+            }
+
+            if (DateTime.TryParseExact(model.TreatmentStartDate, DateFormat, CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var treatmentStartDate) == false)
+            {
+                ModelState.AddModelError(nameof(model.TreatmentStartDate), "Invalid date format");
+                model.GenderOptions = GetGenderOptions();
+                model.PatientStatusOptions = GetStatusOptions();
+                return View(model);
+            }
+
+            if (DateTime.TryParseExact(model.TreatmentEndDate, DateFormat, CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var treatmentEndDate) == false)
+            {
+                ModelState.AddModelError(nameof(model.TreatmentEndDate), "Invalid date format");
+                model.GenderOptions = GetGenderOptions();
+                model.PatientStatusOptions = GetStatusOptions();
+                return View(model);
+            }
+
+            if (DateTime.TryParseExact(model.DateOfBirth, DateFormat, CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var birthDate) == false)
+            {
+                ModelState.AddModelError(nameof(model.DateOfBirth), "Invalid date format");
+                model.GenderOptions = GetGenderOptions();
+                model.PatientStatusOptions = GetStatusOptions();
+                return View(model);
+            }
+
+            Patient? patient = await _dbContext
+                .Patients
+                .Include(p => p.EmergencyContact)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            patient.FirstName = model.FirstName;
+            patient.LastName = model.LastName;
+            patient.Email = model.Email;
+            patient.PhoneNumber = model.PhoneNumber;
+            patient.Age = model.Age;
+            patient.Gender = model.Gender;
+            patient.BirthDate = birthDate;
+            patient.TreatmentStartDate = treatmentStartDate;
+            patient.TreatmentEndDate = treatmentEndDate;
+            patient.ReasonForVisit = model.ReasonForVisit;
+            patient.ReferredBy = model.ReferredBy;
+            patient.ImportantInfo = model.ImportantInfo;
+            patient.Status = model.Status;
+            patient.Feedback = model.Feedback;
+            patient.EmergencyContact.Name = model.EmergencyContactName;
+            patient.EmergencyContact.PhoneNumber = model.EmergencyContactPhoneNumber;
+            patient.EmergencyContact.Relationship = model.EmergencyContactRelationship;
+
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        private List<SelectListItem> GetGenderOptions()
+        {
+            var gendersList = Enum.GetValues(typeof(Gender))
+                .Cast<Gender>()
+                .Select(g => new SelectListItem
+                {
+                    Value = ((int)g).ToString(),
+                    Text = g.ToString()
+                })
+                .ToList();
+
+            return gendersList;
+        }
+
+        private List<SelectListItem> GetStatusOptions()
+        {
+            var patientStatusList = Enum.GetValues(typeof(PatientStatus))
+                .Cast<PatientStatus>()
+                .Select(g => new SelectListItem
+                {
+                    Value = ((int)g).ToString(),
+                    Text = g.ToString()
+                })
+                .ToList();
+
+            return patientStatusList;
+        }
+
+
     }
 }

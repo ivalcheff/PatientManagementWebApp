@@ -1,5 +1,6 @@
 ﻿
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Common;
 using static PatientManagementApp.Common.Enums;
@@ -8,10 +9,11 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
     public class PatientDetailsViewModel
     {
+        public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public int Age { get; set; }
-        public Enums.Gender Gender { get; set; }
+        public Gender Gender { get; set; }
         public string? Email { get; set; }
 
         public string PhoneNumber { get; set; } = null!;

@@ -1,12 +1,10 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
 }
+@using PatientManagementApp.Web.ViewModels.PatientViewModels
+@model IEnumerable<PatientDetailsViewModel>
 
-@model IEnumerable<PatientManagementApp.Data.Models.Patient>
-
-<h2>All Patients</h2>
+<h2>My Patients</h2>
 
 <table class="table table-striped">
     <thead>
@@ -14,6 +12,7 @@
         <th>First Name</th>
         <th>Last Name</th>
         <th>Age</th>
+        <th>Phone Number</th>
         <th>Status</th>
         <th>Actions</th>
     </tr>
@@ -25,6 +24,7 @@
             <td>@p.FirstName</td>
             <td>@p.LastName</td>
             <td>@p.Age</td>
+            <td>@p.PhoneNumber</td>
             <td>@p.Status</td>
             <td>
                 <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-info">Details</a>
