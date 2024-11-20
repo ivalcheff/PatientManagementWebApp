@@ -65,6 +65,11 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [MaxLength(PatientImportantInfoMaxLength)]
         public string ImportantInfo { get; set; } = null!;
 
+        [MinLength(DiagnosisMinLength)]
+        [MaxLength(DiagnosisMaxLength)]
+        public string? Diagnosis { get; set; } 
+
+
         [Required]
         public PatientStatus Status { get; set; }
 

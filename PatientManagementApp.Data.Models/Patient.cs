@@ -73,6 +73,10 @@ namespace PatientManagementApp.Data.Models
         public string ImportantInfo { get; set; } = null!;
 
 
+        [MaxLength(DiagnosisMaxLength)]
+        [Comment("The patient's diagnosis")]
+        public string? Diagnosis { get; set; } 
+
         [Required]
         [Comment("Whether the treatment is active in the moment")]
         public PatientStatus Status { get; set; }
@@ -113,14 +117,6 @@ namespace PatientManagementApp.Data.Models
         [Comment("A collection of notes about the patient")]
         public virtual ICollection<Note> Notes { get; set; } =
             new HashSet<Note>();
-
-
-        //mapping tables 
-
-        [Required]
-        [Comment("The diagnoses of the patient")]
-        public virtual ICollection<PatientsDiagnoses> PatientsDiagnoses { get; set; } = 
-            new HashSet<PatientsDiagnoses>();
 
 
         [Required]

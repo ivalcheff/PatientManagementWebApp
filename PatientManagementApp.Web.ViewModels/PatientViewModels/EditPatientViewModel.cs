@@ -12,10 +12,6 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
     public class EditPatientViewModel
     {
-        public EditPatientViewModel()
-        {
-            this.TreatmentStartDate = DateTime.Now.ToString(DateFormat);
-        }
 
         public Guid Id { get; set; }
 
@@ -51,8 +47,7 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 
 
         //Treatment info
-        [Required] 
-        public string TreatmentStartDate { get; set; }
+        public string? TreatmentStartDate { get; set; }
         public string? TreatmentEndDate { get; set; }
 
         public PatientStatus Status { get; set; }
@@ -62,7 +57,10 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [MaxLength(ReasonForVisitMaxLength)]
         public string? ReasonForVisit { get; set; }
 
-        //TODO add Diagnosis
+        [MinLength(DiagnosisMinLength)]
+        [MaxLength(DiagnosisMaxLength)]
+        public string? Diagnosis { get; set; }
+
 
         //TODO add Medications
 

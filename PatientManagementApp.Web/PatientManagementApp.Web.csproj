@@ -31,8 +31,4 @@
     <ProjectReference Include="..\PatientManagementApp.Web.ViewModels\PatientManagementApp.Web.ViewModels.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Practitioner\" />
-  </ItemGroup>
-
 </Project>

@@ -36,6 +36,9 @@ namespace PatientManagementApp.Common
 
             public const int FeedbackMinLength = 3;
             public const int FeedbackMaxLength = 500;
+
+            public const int DiagnosisMinLength = 2;
+            public const int DiagnosisMaxLength = 300;
         }
 
 

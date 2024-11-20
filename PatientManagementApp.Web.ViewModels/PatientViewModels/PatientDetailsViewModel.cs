@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Common;
 using static PatientManagementApp.Common.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
@@ -28,6 +29,8 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         public string? ReferredBy { get; set; }
 
         public string ImportantInfo { get; set; } = null!;
+       
+        public string? Diagnosis { get; set; }
 
         public PatientStatus Status { get; set; }
         public string? Feedback { get; set; }
@@ -40,9 +43,6 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 
 
         public List<FileUpload> Files { get; set; } = new List<FileUpload>();
-
-        public List<PatientsDiagnoses> Diagnoses { get; set; } = new List<PatientsDiagnoses>();
-
         public List<PatientsMedications> PatientsMedications { get; set; } = new List<PatientsMedications>();
 
     }

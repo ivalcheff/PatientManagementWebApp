@@ -1,0 +1,33 @@
+﻿
+@{
+}
+
+@using PatientManagementApp.Web.ViewModels.PractitionerViewModels;
+@using static PatientManagementApp.Common.ModelValidationConstraints.Global
+@model PractitionerDetailsViewModel
+
+<h2>@Model.FirstName @Model.LastName</h2>
+
+<p><strong>Phone Number:</strong> @Model.Phone</p>
+<p><strong>Email:</strong> @Model.Phone</p>
+<p><strong>Specialties:</strong> </p>
+
+
+<h3>Appointments</h3>
+@if (Model.Appointments.Any())
+{
+    <ul class="list-group">
+        @foreach (AppointmentInfoViewModel a in Model.Appointments)
+        {
+            <li class="list-group-item">
+                <strong>@a.PatientFirstName</strong> <br />
+                <strong>@a.PatientLastName</strong> <br />
+                <small>Time: @a.StartDate</small>
+            </li>
+        }
+    </ul>
+}
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit</a>
+
+

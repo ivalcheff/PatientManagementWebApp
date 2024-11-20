@@ -58,6 +58,11 @@
                 <span asp-validation-for="@Model.ImportantInfo" class="text-danger"></span>
             </div>
             <div class="mb-3">
+                <label asp-for="@Model.Diagnosis" class="form-label-add-edit">Diagnosis</label>
+                <textarea asp-for="@Model.Diagnosis" class="form-control" aria-required="false" placeholder="Patient's diagnosis'" ></textarea>
+                <span asp-validation-for="@Model.Diagnosis" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
                 <label asp-for="@Model.ReasonForVisit" class="form-label-add-edit">Reason for Visit</label>
                 <textarea asp-for="@Model.ReasonForVisit" class="form-control" aria-required="false" placeholder="Initial reason for visit (optional)"  rows="5"></textarea>
                 <span asp-validation-for="@Model.ReasonForVisit" class="text-danger"></span>

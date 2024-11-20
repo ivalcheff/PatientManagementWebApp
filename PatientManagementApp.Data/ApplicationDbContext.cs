@@ -32,7 +32,6 @@ namespace PatientManagementApp.Data
 
         }
         public virtual DbSet<Appointment> Appointments { get; set; } = null!;
-        public virtual DbSet<Diagnosis> Diagnoses { get; set; } = null!;
         public virtual DbSet<Patient> Patients { get; set; } = null!;
         public virtual DbSet<EmergencyContact> EmergencyContacts { get; set; } = null!;
         public virtual DbSet<Practitioner> Practitioners { get; set; } = null!;
@@ -40,7 +39,6 @@ namespace PatientManagementApp.Data
         public virtual DbSet<Note> Notes { get; set; } = null!;
         public virtual DbSet<Medication> Medications { get; set; } = null!;
         public virtual DbSet<Specialty> Specialties { get; set; } = null!;
-        public virtual DbSet<PatientsDiagnoses> PatientsDiagnoses { get; set; } = null!;
         public virtual DbSet<PatientsMedications> PatientsMedications { get; set; } = null!;
         public virtual DbSet<PractitionersSpecialties> PractitionersSpecialties { get; set; } = null!;
 
@@ -69,47 +67,59 @@ namespace PatientManagementApp.Data
                 }
             }
 
-
-            // Seed practitioners as users
-
-                var practitioners = new[]
+            //add an admin 
+            string email = "admin@admin.com";
+            string password = "admin123";
+            if (await userManager.FindByEmailAsync(email) == null)
+            {
+                var admin = new ApplicationUser
                 {
-                    new { Email = "practitioner1@example.com", FirstName = "Ivan", LastName = "Ivanov", Phone = "08888888888" },
-                    new { Email = "practitioner2@example.com", FirstName = "Dimitar", LastName = "Dimitrov", Phone = "+1949232323" },
+                    Email = email,
+                    UserName = email
                 };
+                await userManager.CreateAsync(admin, password);
+                await userManager.AddToRoleAsync(admin, "Admin");
+            }
+            
+            // Seed practitioners as users
+            var practitioners = new[]
+            {
+                new { Email = "practitioner1@example.com", FirstName = "Ivan", LastName = "Ivanov", Phone = "08888888888" },
+                new { Email = "practitioner2@example.com", FirstName = "Dimitar", LastName = "Dimitrov", Phone = "+1949232323" },
+            };
 
-                foreach (var practitionerData in practitioners)
+            foreach (var practitionerData in practitioners)
+            {
+                // Check if the user already exists
+                var user = await userManager.FindByEmailAsync(practitionerData.Email);
+                if (user == null)
                 {
-                    // Check if the user already exists
-                    var user = await userManager.FindByEmailAsync(practitionerData.Email);
-                    if (user == null)
+                    // Create ApplicationUser
+                    user = new ApplicationUser { UserName = practitionerData.Email, Email = practitionerData.Email };
+                    var result = await userManager.CreateAsync(user, "Password@123");
+
+                    if (result.Succeeded)
                     {
-                        // Create ApplicationUser
-                        user = new ApplicationUser { UserName = practitionerData.Email, Email = practitionerData.Email };
-                        var result = await userManager.CreateAsync(user, "Password@123");
+                        // Assign the "User" role
+                        await userManager.AddToRoleAsync(user, "User");
 
-                        if (result.Succeeded)
+                        // Create and link Practitioner entity
+                        var practitioner = new Practitioner
                         {
-                            // Assign the "User" role
-                            await userManager.AddToRoleAsync(user, "User");
+                            Id = user.Id,
+                            FirstName = practitionerData.FirstName,
+                            LastName = practitionerData.LastName,
+                            Phone = practitionerData.Phone,
+                        };
 
-                            // Create and link Practitioner entity
-                            var practitioner = new Practitioner
-                            {
-                                Id = user.Id,
-                                FirstName = practitionerData.FirstName,
-                                LastName = practitionerData.LastName,
-                                Phone = practitionerData.Phone,
-                            };
-
-                            Practitioners.Add(practitioner);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Failed to create user {practitionerData.Email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                        }
+                        Practitioners.Add(practitioner);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to create user {practitionerData.Email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                     }
                 }
+            }
 
             //Seed Specialties
             if (!context.Specialties.Any())

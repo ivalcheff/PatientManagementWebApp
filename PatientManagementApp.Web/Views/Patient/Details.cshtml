@@ -20,7 +20,7 @@
 <p><strong>Reason for visit:</strong> @Model.ReasonForVisit </p>
 
 <p><strong>Important information:</strong> @Model.ImportantInfo</p>
-@* <p><strong>Diagnosis:</strong> @Model.Diagnoses</p> *@
+<p><strong>Diagnosis:</strong> @Model.Diagnosis</p>
 @* <p><strong>Medication:</strong> @Model.PatientsMedications</p> *@
 
 <h3>Patient Contacts</h3>
@@ -32,7 +32,6 @@
 <p><strong>Phone:</strong> @Model.EmergencyContactPhoneNumber </p>
 <p><strong>Relation:</strong> @Model.EmergencyContactRelationship </p>
 
-<a asp-action="Edit" asp-route-id="@Model.Id"  class="btn btn-primary">Edit Patient Details</a>
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit</a>
 
 <a asp-action="Index" class="btn btn-primary">Back to All Patients</a>

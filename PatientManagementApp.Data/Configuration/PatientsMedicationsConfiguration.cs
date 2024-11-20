@@ -1,8 +1,7 @@
-﻿
-
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PatientManagementApp.Data.Models;
+
 
 namespace PatientManagementApp.Data.Configuration
 {
