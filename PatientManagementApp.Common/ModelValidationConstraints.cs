@@ -8,6 +8,7 @@ namespace PatientManagementApp.Common
         public static class Global
         {
             public const string DateFormat = "dd.mm.yyyy";
+            public const string AppointmentTimeFormat = "dd.mm.yyyy HH:mm";
 
             public const int EmailMinLength = 10;
             public const int EmailMaxLength = 50;

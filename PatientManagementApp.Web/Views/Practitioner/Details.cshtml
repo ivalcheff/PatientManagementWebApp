@@ -9,8 +9,21 @@
 <h2>@Model.FirstName @Model.LastName</h2>
 
 <p><strong>Phone Number:</strong> @Model.Phone</p>
-<p><strong>Email:</strong> @Model.Phone</p>
+<p><strong>Email:</strong> @Model.Email</p>
 <p><strong>Specialties:</strong> </p>
+@if (Model.Specialties.Any())
+{
+    <ul>
+        @foreach (var specialty in Model.Specialties)
+        {
+            <li>@specialty</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No specialties listed.</p>
+}
 
 
 <h3>Appointments</h3>
@@ -20,12 +33,15 @@
         @foreach (AppointmentInfoViewModel a in Model.Appointments)
         {
             <li class="list-group-item">
-                <strong>@a.PatientFirstName</strong> <br />
-                <strong>@a.PatientLastName</strong> <br />
+                <strong>@a.PatientFirstName @a.PatientLastName</strong><br />
                 <small>Time: @a.StartDate</small>
             </li>
         }
     </ul>
+}
+else
+{
+    <p>No appointments scheduled.</p>
 }
 
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit</a>

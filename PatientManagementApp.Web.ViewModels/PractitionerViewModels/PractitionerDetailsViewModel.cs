@@ -11,17 +11,11 @@ namespace PatientManagementApp.Web.ViewModels.PractitionerViewModels
     public class PractitionerDetailsViewModel
     {
         public Guid Id { get; set; }
-
-        [MinLength(FirstNameMinLength)]
-        [MaxLength(FirstNameMaxLength)] 
+        
         public string? FirstName { get; set; }
-
-        [MinLength(LastNameMinLength)]
-        [MaxLength(LastNameMaxLength)] 
+        
         public string? LastName { get; set; }
-
-        [MinLength(PhoneMinLength)]
-        [MaxLength(PhoneMaxLength)] 
+        
         public string? Phone { get; set; }
 
         public string? Email { get; set; }
@@ -32,7 +26,7 @@ namespace PatientManagementApp.Web.ViewModels.PractitionerViewModels
 
         public List<AppointmentInfoViewModel> Appointments { get; set; } = new List<AppointmentInfoViewModel>();
 
-        public ICollection<Specialty> Specialties { get; set; } =
-            new List<Specialty>();
+        public List<string> Specialties { get; set; } = new();
+
     }
 }
