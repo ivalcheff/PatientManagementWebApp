@@ -195,16 +195,30 @@ namespace PatientManagementApp.Web.Controllers
             }
         }
 
-        // GET: AppointmentController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user?.Id;
+
+            var appointment = await _dbContext.Appointments
+                .Include(appointment => appointment.Patient)
+                .FirstOrDefaultAsync(a => a.Id == id && a.PractitionerId == userId);
+
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditAppointmentViewModel()
+            {
+                Id = appointment.Id
+            };
+            
+            return View(model);
         }
 
-        // POST: AppointmentController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, EditAppointmentViewModel model)
         {
             try
             {

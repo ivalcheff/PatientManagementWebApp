@@ -13,7 +13,6 @@ namespace PatientManagementApp.Web.ViewModels.AppointmentViewModels
         public string? Description { get; set; }
 
         [Required]
-        
         public string StartDateTime { get; set; } = null!;
         public string? EndDateTime { get; set; }
 
