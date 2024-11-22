@@ -1,5 +1,4 @@
 using System.Diagnostics;
-
 using Microsoft.AspNetCore.Mvc;
 
 using PatientManagementApp.Web.ViewModels;
@@ -12,7 +11,6 @@ namespace PatientManagementApp.Web.Controllers
 
         public IActionResult Index()
         {
-
             ViewData["Title"] = "Home";
             return View();
         }

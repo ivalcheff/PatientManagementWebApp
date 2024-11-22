@@ -1,0 +1,45 @@
+﻿@using PatientManagementApp.Web.ViewModels.AppointmentViewModels
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using static PatientManagementApp.Common.ModelValidationConstraints.Global
+@model CreateAppointmentViewModel
+
+@{
+    ViewBag.Title = "Create New Appointment";
+}
+
+<h2>Add a New Appointment</h2>
+
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="PractitionerId" />
+    <div>
+        <label asp-for="PatientFirstName">Patient First Name</label>
+        <input asp-for="PatientFirstName" class="form-control"/>
+        <span asp-validation-for="PatientFirstName" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="PatientLastName">Patient Last Name</label>
+        <input asp-for="PatientLastName" class="form-control"/>
+        <span asp-validation-for="PatientLastName" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="StartDateTime">Start Time</label>
+        <input asp-for="StartDateTime" class="form-control" value="@DateTime.UtcNow.ToString(AppointmentTimeFormat)"/>
+        <span asp-validation-for="StartDateTime" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="EndDateTime">End Time</label>
+        <input asp-for="EndDateTime" class="form-control" value="@DateTime.UtcNow.ToString(AppointmentTimeFormat)"/>
+        <span asp-validation-for="EndDateTime" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Description">Description</label>
+        <input asp-for="Description" class="form-control"/>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary mt-2">Create</button>
+</form>
+<br />
+<a asp-action="Index">My Appointments</a>
+

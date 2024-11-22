@@ -3,6 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PatientManagementApp.Data.Models;
+using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
 

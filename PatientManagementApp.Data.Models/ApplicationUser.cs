@@ -10,6 +10,12 @@ namespace PatientManagementApp.Data.Models
 {
     public class ApplicationUser : IdentityUser<Guid>
     {
+
+        public ApplicationUser()
+        {
+            this.Id = Guid.NewGuid();
+        }
+
         public virtual Practitioner Practitioner { get; set; } = null!;
 
         //TODO add a Patient User:

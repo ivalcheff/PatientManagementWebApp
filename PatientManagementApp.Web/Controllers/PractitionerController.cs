@@ -9,6 +9,7 @@ using PatientManagementApp.Web.ViewModels.PractitionerViewModels;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 
 
 namespace PatientManagementApp.Web.Controllers
@@ -59,8 +60,8 @@ namespace PatientManagementApp.Web.Controllers
                     {
                         Id = a.Id,
                         Description = a.Description,
-                        StartDate = a.StartDate.ToString(AppointmentTimeFormat),
-                        EndDate = a.EndDate.ToString(AppointmentTimeFormat),
+                        StartDateTime = a.StartDate.ToString(AppointmentTimeFormat),
+                        EndDateTime = a.EndDate.ToString(AppointmentTimeFormat),
                         PatientFirstName = a.Patient.FirstName,
                         PatientLastName = a.Patient.LastName
                     }).ToList()
@@ -102,8 +103,8 @@ namespace PatientManagementApp.Web.Controllers
                         {
                             Id = a.Id, 
                             Description = a.Description,
-                            StartDate = a.StartDate.ToString(DateFormat),
-                            EndDate = a.EndDate.ToString(DateFormat),
+                            StartDateTime = a.StartDate.ToString(DateFormat),
+                            EndDateTime = a.EndDate.ToString(DateFormat),
                             PatientFirstName = a.Patient.FirstName,
                             PatientLastName = a.Patient.LastName
                         }).ToList()

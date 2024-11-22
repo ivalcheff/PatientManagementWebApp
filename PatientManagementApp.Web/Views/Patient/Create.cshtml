@@ -1,11 +1,10 @@
 ﻿
 @using PatientManagementApp.Web.ViewModels.PatientViewModels
-@using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
-@using PatientManagementApp.Common
+@using static PatientManagementApp.Common.ModelValidationConstraints.Global
 @model CreatePatientViewModel
 
 @{
-
+    ViewBag.Title = "Add New Patient";
 }
 
 <h2>Add a New Patient</h2>
@@ -38,7 +37,7 @@
     </div>
     <div>
         <label asp-for="DateOfBirth">Date Of Birth</label>
-        <input asp-for="DateOfBirth"  class="form-control" value="@DateTime.Now.ToString(ModelValidationConstraints.Global.DateFormat)"/>
+        <input asp-for="DateOfBirth"  class="form-control" value="@DateTime.UtcNow.ToString(DateFormat)"/>
         <span asp-validation-for="DateOfBirth" class="text-danger"></span>
     </div>
     <div>
@@ -50,7 +49,7 @@
     <p><strong>Current Treatment Information</strong> </p>
     <div>
         <label asp-for="TreatmentStartDate">Treatment Start Date</label>
-        <input asp-for="TreatmentStartDate" class="form-control" value="@DateTime.Now.ToString(ModelValidationConstraints.Global.DateFormat)" />
+        <input asp-for="TreatmentStartDate" class="form-control" value="@DateTime.UtcNow.ToString(DateFormat)" />
         <span asp-validation-for="TreatmentStartDate" class="text-danger"></span>
     </div>
     <div>

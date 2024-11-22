@@ -4,7 +4,9 @@
 
 @using PatientManagementApp.Web.ViewModels.PractitionerViewModels;
 @using static PatientManagementApp.Common.ModelValidationConstraints.Global
-@model PractitionerDetailsViewModel
+@using PatientManagementApp.Web.ViewModels.AppointmentViewModels
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model PatientManagementApp.Web.ViewModels.PractitionerViewModels.PractitionerDetailsViewModel
 
 <h2>@Model.FirstName @Model.LastName</h2>
 
@@ -34,7 +36,7 @@ else
         {
             <li class="list-group-item">
                 <strong>@a.PatientFirstName @a.PatientLastName</strong><br />
-                <small>Time: @a.StartDate</small>
+                <small>Time: @a.StartDateTime</small>
             </li>
         }
     </ul>
@@ -44,6 +46,7 @@ else
     <p>No appointments scheduled.</p>
 }
 
+<a asp-controller="Appointment" asp-action="Create" asp-route-practitionerId="@Model.Id" class="btn btn-primary">Create Appointment</a>
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit</a>
 
 
