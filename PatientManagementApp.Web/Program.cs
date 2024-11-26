@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
+
+
 using PatientManagementApp.Data;
+using PatientManagementApp.Data.Repository;
 using PatientManagementApp.Data.Models;
-using PatientManagementApp.Web.Data;
+using PatientManagementApp.Data.Repository.Interfaces;
+using PatientManagementApp.Services.Mapping;
+using PatientManagementApp.Web.Infrastructure.Extensions;
+using PatientManagementApp.Web.ViewModels;
 
 namespace PatientManagementApp.Web
 {
@@ -34,11 +38,20 @@ namespace PatientManagementApp.Web
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+            builder.Services.ConfigureApplicationCookie(cfg =>
+            {
+                cfg.LoginPath = "/Identity/Account/Login";
+            });
+
+
+            builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
             var app = builder.Build();
+
+            AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).Assembly);
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

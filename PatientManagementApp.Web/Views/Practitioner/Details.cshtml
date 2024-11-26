@@ -1,12 +1,15 @@
 ﻿
-@{
-}
 
-@using PatientManagementApp.Web.ViewModels.PractitionerViewModels;
-@using static PatientManagementApp.Common.ModelValidationConstraints.Global
+
 @using PatientManagementApp.Web.ViewModels.AppointmentViewModels
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PatientManagementApp.Web.ViewModels.PractitionerViewModels.PractitionerDetailsViewModel
+
+@{
+    ViewBag.Title = "My Details";
+}
+
+<h1>@ViewBag.Title</h1>
 
 <h2>@Model.FirstName @Model.LastName</h2>
 
@@ -26,6 +29,7 @@ else
 {
     <p>No specialties listed.</p>
 }
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit Details</a>
 
 
 <h3>Appointments</h3>
@@ -47,6 +51,5 @@ else
 }
 
 <a asp-controller="Appointment" asp-action="Create" asp-route-practitionerId="@Model.Id" class="btn btn-primary">Create Appointment</a>
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit</a>
 
 

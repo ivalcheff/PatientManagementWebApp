@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.13.1" />
-    <PackageReference Include="bootstrap" Version="5.3.3" />
     <PackageReference Include="fullcalendar" Version="3.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
@@ -30,6 +29,8 @@
     <ProjectReference Include="..\PatientManagementApp.Common\PatientManagementApp.Common.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Data.Models\PatientManagementApp.Data.Models.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Data\PatientManagementApp.Data.csproj" />
+    <ProjectReference Include="..\PatientManagementApp.Services.Mapping\PatientManagementApp.Services.Mapping.csproj" />
+    <ProjectReference Include="..\PatientManagementApp.Web.Infrastructure\PatientManagementApp.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Web.ViewModels\PatientManagementApp.Web.ViewModels.csproj" />
   </ItemGroup>
 

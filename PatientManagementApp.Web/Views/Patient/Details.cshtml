@@ -7,7 +7,10 @@
 @using static PatientManagementApp.Common.ModelValidationConstraints.Global
 @model PatientDetailsViewModel
 
-<h2>@Model.FirstName @Model.LastName</h2>
+<h2 class="text-center">@ViewBag.Title</h2>
+
+
+<h3>@Model.FirstName @Model.LastName</h3>
 
 <p><strong>Age:</strong> @Model.Age</p>
 <p><strong>Gender:</strong> @Model.Gender</p>

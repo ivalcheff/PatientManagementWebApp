@@ -7,7 +7,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model AppointmentInfoViewModel
 
-<h2>Appointment Details</h2>
+<h2 class="text-center">@ViewBag.Title</h2>
 
 <p><strong>Patient:</strong> @Model.PatientFirstName @Model.PatientLastName</p>
 <p><strong>Start:</strong> @Model.StartDateTime</p>

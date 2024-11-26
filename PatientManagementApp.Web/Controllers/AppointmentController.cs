@@ -254,11 +254,18 @@ namespace PatientManagementApp.Web.Controllers
 
 
 
+        
+        
         [HttpGet]
         public async Task<IActionResult> GetAppointments()
         {
             var user = await _userManager.GetUserAsync(User);
             var userId = user?.Id;
+
+            if (userId == null)
+            {
+                return Unauthorized(); // Ensure the user is logged in
+            }
 
             var appointments = await _dbContext.Appointments
                 .Where(a => a.PractitionerId == userId)
@@ -268,13 +275,15 @@ namespace PatientManagementApp.Web.Controllers
             var events = appointments.Select(a => new
             {
                 title = $"{a.Patient.FirstName} {a.Patient.LastName} - {a.Description}",
-                start = a.StartDate.ToString(AppointmentTimeFormat),
+                start = a.StartDate.ToString(AppointmentTimeFormat), // ISO format compatible with FullCalendar
                 end = a.EndDate.ToString(AppointmentTimeFormat),
-                id = a.Id
+                id = a.Id.ToString()
             });
 
             return new JsonResult(events);
         }
+
+        
 
     }
 }
