@@ -29,6 +29,7 @@
     <ProjectReference Include="..\PatientManagementApp.Common\PatientManagementApp.Common.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Data.Models\PatientManagementApp.Data.Models.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Data\PatientManagementApp.Data.csproj" />
+    <ProjectReference Include="..\PatientManagementApp.Services.Data\PatientManagementApp.Services.Data.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Services.Mapping\PatientManagementApp.Services.Mapping.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Web.Infrastructure\PatientManagementApp.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\PatientManagementApp.Web.ViewModels\PatientManagementApp.Web.ViewModels.csproj" />

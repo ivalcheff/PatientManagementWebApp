@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PatientManagementApp.Services.Mapping;
+using System.ComponentModel.DataAnnotations;
+using PatientManagementApp.Data.Models;
 using static PatientManagementApp.Common.ModelValidationConstraints.Appointment;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
 namespace PatientManagementApp.Web.ViewModels.AppointmentViewModels
 {
-    public class CreateAppointmentViewModel
+    public class CreateAppointmentViewModel : IMapFrom<Appointment>
     {
         public int Id { get; set; }
 
@@ -13,8 +15,8 @@ namespace PatientManagementApp.Web.ViewModels.AppointmentViewModels
         public string? Description { get; set; }
 
         [Required]
-        public string StartDateTime { get; set; } = null!;
-        public string? EndDateTime { get; set; }
+        public string StartDate { get; set; } = null!;
+        public string? EndDate { get; set; }
 
 
         public Guid PractitionerId { get; set; }

@@ -59,7 +59,7 @@ namespace PatientManagementApp.Data.Repository
             return await this._dbSet.ToArrayAsync();
         }
 
-        public IEnumerable<TType> GetAllAttached()
+        public IQueryable<TType> GetAllAttached()
         {
             return this._dbSet.AsQueryable();
         }

@@ -18,7 +18,7 @@ namespace PatientManagementApp.Data.Repository.Interfaces
 
         Task<IEnumerable<TType>> GetAllAsync();
 
-        IEnumerable<TType> GetAllAttached();
+        IQueryable<TType> GetAllAttached();
 
 
         void Add(TType item);

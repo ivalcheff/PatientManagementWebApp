@@ -60,8 +60,8 @@ namespace PatientManagementApp.Web.Controllers
                     {
                         Id = a.Id,
                         Description = a.Description,
-                        StartDateTime = a.StartDate.ToString(AppointmentTimeFormat),
-                        EndDateTime = a.EndDate.ToString(AppointmentTimeFormat),
+                        StartDate = a.StartDate.ToString(AppointmentTimeFormat),
+                        EndDate = a.EndDate.ToString(AppointmentTimeFormat),
                         PatientFirstName = a.Patient.FirstName,
                         PatientLastName = a.Patient.LastName
                     }).ToList()
@@ -103,8 +103,8 @@ namespace PatientManagementApp.Web.Controllers
                         {
                             Id = a.Id, 
                             Description = a.Description,
-                            StartDateTime = a.StartDate.ToString(DateFormat),
-                            EndDateTime = a.EndDate.ToString(DateFormat),
+                            StartDate = a.StartDate.ToString(DateFormat),
+                            EndDate = a.EndDate.ToString(DateFormat),
                             PatientFirstName = a.Patient.FirstName,
                             PatientLastName = a.Patient.LastName
                         }).ToList()

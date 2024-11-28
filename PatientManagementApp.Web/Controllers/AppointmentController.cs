@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Security.Claims;
 
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
+using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
@@ -16,67 +18,62 @@ namespace PatientManagementApp.Web.Controllers
 {
     [Authorize]
 
-    public class AppointmentController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager) 
+    public class AppointmentController(ApplicationDbContext dbContext, 
+                                        UserManager<ApplicationUser> userManager,
+                                        IAppointmentService appointmentService) 
         : BaseController
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly IAppointmentService _appointmentService = appointmentService;
 
         // GET: AppointmentController
         [HttpGet]
         public async Task<ActionResult> Index()
         {
            var user = await _userManager.GetUserAsync(User);
-           var userId = user?.Id;
+           var userId = user!.Id;
+            
 
-           var appointments = await this._dbContext
-               .Appointments
-               .Where(a => a.PractitionerId == userId)
-               .Select(a => new AppointmentInfoViewModel()
-               {
-                   Id = a.Id,
-                   Description = a.Description,
-                   StartDateTime = a.StartDate.ToString(AppointmentTimeFormat),
-                   EndDateTime = a.EndDate.ToString(AppointmentTimeFormat),
-                   PatientFirstName = a.Patient.FirstName,
-                   PatientLastName = a.Patient.LastName
-               })
-               .AsNoTracking()
-               .ToListAsync();
-
+           IEnumerable<AppointmentInfoViewModel> appointments
+               = await this._appointmentService
+                   .IndexAllOrderedByDateAsync(userId);
 
            return View(appointments);
         }
 
-        // GET: AppointmentController/Details/5
+
+
         [HttpGet]
         public async Task<ActionResult> Details(int id)
         {
 
             var user = await _userManager.GetUserAsync(User);
-            var userId = user?.Id;
+            var userId = user!.Id;
 
-            var appointment = await _dbContext.Appointments
-                .Include(appointment => appointment.Patient)
-                .FirstOrDefaultAsync(a => a.Id == id && a.PractitionerId == userId);
+            var appointment = await _appointmentService
+                .GetAppointmentDetailsByIdAsync(id, userId);
 
             if (appointment == null)
             {
                 return NotFound();
             }
 
-            var model = new AppointmentInfoViewModel()
-            {
-                Id = id,
-                Description = appointment?.Description,
-                StartDateTime = appointment?.StartDate.ToString(AppointmentTimeFormat),
-                EndDateTime = appointment?.EndDate.ToString(AppointmentTimeFormat),
-                PatientFirstName = appointment.Patient.FirstName,
-                PatientLastName = appointment.Patient.LastName
-            };
+            //var model = new AppointmentInfoViewModel()
+            //{
+            //    Id = id,
+            //    Description = appointment?.Description,
+            //    StartDate = appointment?.StartDate.ToString(AppointmentTimeFormat),
+            //    EndDate = appointment?.EndDate.ToString(AppointmentTimeFormat),
+            //    PatientFirstName = appointment.Patient.FirstName,
+            //    PatientLastName = appointment.Patient.LastName
+            //};
 
-            return View(model);
+            return View(appointment);
         }
+
+
+
 
         [HttpGet]
         public async Task<ActionResult> Create()
@@ -112,46 +109,39 @@ namespace PatientManagementApp.Web.Controllers
         {
             try
             {
-                bool isAppointmentStartDateValid = DateTime.TryParseExact(model.StartDateTime, AppointmentTimeFormat,
+                bool isAppointmentStartDateValid = DateTime.TryParseExact(model.StartDate, AppointmentTimeFormat,
                     CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime appointmentStartDate);
 
                 if (!isAppointmentStartDateValid)
                 {
-                    this.ModelState.AddModelError(nameof(model.StartDateTime),
+                    this.ModelState.AddModelError(nameof(model.StartDate),
                         $"The date should be in the following format: {AppointmentTimeFormat}");
                     return this.View(model);
                 }
 
-                bool isAppointmentEndDateValid = DateTime.TryParseExact(model.EndDateTime, AppointmentTimeFormat,
+                bool isAppointmentEndDateValid = DateTime.TryParseExact(model.EndDate, AppointmentTimeFormat,
                     CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime appointmentEndDate);
 
                 if (!isAppointmentEndDateValid)
                 {
-                    this.ModelState.AddModelError(nameof(model.EndDateTime),
+                    this.ModelState.AddModelError(nameof(model.EndDate),
                         $"The date should be in the following format: {AppointmentTimeFormat}");
                     return this.View(model);
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    Console.WriteLine("Model state is not valid");
                     return this.View(model);
                 }
-
-                Console.WriteLine("Model state is valid");
-
 
                 // Lookup practitioner in the database
                 var practitioner = await _dbContext.Practitioners.FirstOrDefaultAsync(p => p.Id == model.PractitionerId);
                 if (practitioner == null)
                 {
                     ModelState.AddModelError("", "The specified practitioner does not exist.");
-                    Console.WriteLine("Practitioner not found.");
-
                     return View(model);
                 }
 
-                Console.WriteLine("Practitioner exists");
 
                 // Lookup the patient by first name and last name
                 var patient = await _dbContext.Patients
@@ -160,11 +150,8 @@ namespace PatientManagementApp.Web.Controllers
                 if (patient == null)
                 {
                     ModelState.AddModelError("", "The specified patient could not be found.");
-                    Console.WriteLine("Patient not found.");
                     return View(model);
                 }
-
-                Console.WriteLine("patient exists");
 
                 Appointment appointment = new Appointment()
                 {
@@ -230,33 +217,8 @@ namespace PatientManagementApp.Web.Controllers
             }
         }
 
-        // GET: AppointmentController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
-        // POST: AppointmentController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-
-
-
-        
-        
-        [HttpGet]
+       [HttpGet]
         public async Task<IActionResult> GetAppointments()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -283,7 +245,31 @@ namespace PatientManagementApp.Web.Controllers
             return new JsonResult(events);
         }
 
-        
+        //TODO:
+        /*
+
+        // GET: AppointmentController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        // POST: AppointmentController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        */
 
     }
 }

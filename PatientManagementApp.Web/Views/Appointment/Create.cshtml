@@ -23,14 +23,14 @@
         <span asp-validation-for="PatientLastName" class="text-danger"></span>
     </div>
     <div>
-        <label asp-for="StartDateTime">Start Time</label>
-        <input asp-for="StartDateTime" class="form-control" value="@DateTime.UtcNow.ToString(AppointmentTimeFormat)"/>
-        <span asp-validation-for="StartDateTime" class="text-danger"></span>
+        <label asp-for="StartDate">Start Time</label>
+        <input asp-for="StartDate" class="form-control" value="@DateTime.UtcNow.ToString(AppointmentTimeFormat)"/>
+        <span asp-validation-for="StartDate" class="text-danger"></span>
     </div>
     <div>
-        <label asp-for="EndDateTime">End Time</label>
-        <input asp-for="EndDateTime" class="form-control" value="@DateTime.UtcNow.ToString(AppointmentTimeFormat)"/>
-        <span asp-validation-for="EndDateTime" class="text-danger"></span>
+        <label asp-for="EndDate">End Time</label>
+        <input asp-for="EndDate" class="form-control" value="@DateTime.UtcNow.ToString(AppointmentTimeFormat)"/>
+        <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
     <div>
         <label asp-for="Description">Description</label>

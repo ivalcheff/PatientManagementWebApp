@@ -6,6 +6,8 @@ using PatientManagementApp.Data;
 using PatientManagementApp.Data.Repository;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Data.Repository.Interfaces;
+using PatientManagementApp.Services.Data;
+using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Services.Mapping;
 using PatientManagementApp.Web.Infrastructure.Extensions;
 using PatientManagementApp.Web.ViewModels;
@@ -45,6 +47,7 @@ namespace PatientManagementApp.Web
 
 
             builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
+            builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

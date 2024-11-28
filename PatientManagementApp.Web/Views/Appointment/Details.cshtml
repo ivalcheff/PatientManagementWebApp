@@ -10,8 +10,8 @@
 <h2 class="text-center">@ViewBag.Title</h2>
 
 <p><strong>Patient:</strong> @Model.PatientFirstName @Model.PatientLastName</p>
-<p><strong>Start:</strong> @Model.StartDateTime</p>
-<p><strong>End:</strong> @Model.EndDateTime</p>
+<p><strong>Start:</strong> @Model.StartDate</p>
+<p><strong>End:</strong> @Model.EndDate</p>
 <p><strong>Description:</strong> @Model.Description </p>
 
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit</a>
