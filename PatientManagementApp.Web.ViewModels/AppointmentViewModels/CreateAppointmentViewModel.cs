@@ -6,7 +6,7 @@ using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
 namespace PatientManagementApp.Web.ViewModels.AppointmentViewModels
 {
-    public class CreateAppointmentViewModel : IMapFrom<Appointment>
+    public class CreateAppointmentViewModel : IMapTo<Appointment>
     {
         public int Id { get; set; }
 

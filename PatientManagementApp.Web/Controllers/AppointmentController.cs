@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Security.Claims;
+﻿using System.Globalization;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 
 using PatientManagementApp.Data;
@@ -47,7 +46,6 @@ namespace PatientManagementApp.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(int id)
         {
-
             var user = await _userManager.GetUserAsync(User);
             var userId = user!.Id;
 
@@ -58,16 +56,6 @@ namespace PatientManagementApp.Web.Controllers
             {
                 return NotFound();
             }
-
-            //var model = new AppointmentInfoViewModel()
-            //{
-            //    Id = id,
-            //    Description = appointment?.Description,
-            //    StartDate = appointment?.StartDate.ToString(AppointmentTimeFormat),
-            //    EndDate = appointment?.EndDate.ToString(AppointmentTimeFormat),
-            //    PatientFirstName = appointment.Patient.FirstName,
-            //    PatientLastName = appointment.Patient.LastName
-            //};
 
             return View(appointment);
         }
@@ -83,15 +71,11 @@ namespace PatientManagementApp.Web.Controllers
             {
                 return RedirectToAction("Details", "Practitioner");
             }
-            Console.WriteLine($"User ID: {user.Id}");
 
-            var practitioner = await _dbContext.Practitioners
-                .FirstOrDefaultAsync(p => p.Id == user.Id);
+            var practitioner = await _appointmentService.GetPractitionerByIdAsync(user.Id);
 
             if (practitioner == null)
             {
-                Console.WriteLine("Practitioner record not found for the current user.");
-
                 ModelState.AddModelError("", "You must be registered as a practitioner to create an appointment.");
                 return RedirectToAction("Index");
             }
@@ -109,23 +93,16 @@ namespace PatientManagementApp.Web.Controllers
         {
             try
             {
-                bool isAppointmentStartDateValid = DateTime.TryParseExact(model.StartDate, AppointmentTimeFormat,
-                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime appointmentStartDate);
-
-                if (!isAppointmentStartDateValid)
+                if (!ValidateDate(model.StartDate, AppointmentTimeFormat, out DateTime appointmentStartDate,
+                        out string startDateValidationMessage))
                 {
-                    this.ModelState.AddModelError(nameof(model.StartDate),
-                        $"The date should be in the following format: {AppointmentTimeFormat}");
+                    this.ModelState.AddModelError(nameof(model.StartDate), startDateValidationMessage);
                     return this.View(model);
                 }
 
-                bool isAppointmentEndDateValid = DateTime.TryParseExact(model.EndDate, AppointmentTimeFormat,
-                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime appointmentEndDate);
-
-                if (!isAppointmentEndDateValid)
+                if (!ValidateDate(model.EndDate, AppointmentTimeFormat, out DateTime appointmentEndDate, out string endDateValidationMessage))
                 {
-                    this.ModelState.AddModelError(nameof(model.EndDate),
-                        $"The date should be in the following format: {AppointmentTimeFormat}");
+                    this.ModelState.AddModelError(nameof(model.EndDate), endDateValidationMessage);
                     return this.View(model);
                 }
 
@@ -135,7 +112,8 @@ namespace PatientManagementApp.Web.Controllers
                 }
 
                 // Lookup practitioner in the database
-                var practitioner = await _dbContext.Practitioners.FirstOrDefaultAsync(p => p.Id == model.PractitionerId);
+                var practitioner = await _appointmentService
+                    .GetPractitionerByIdAsync(model.PractitionerId);
                 if (practitioner == null)
                 {
                     ModelState.AddModelError("", "The specified practitioner does not exist.");
@@ -144,32 +122,17 @@ namespace PatientManagementApp.Web.Controllers
 
 
                 // Lookup the patient by first name and last name
-                var patient = await _dbContext.Patients
-                    .FirstOrDefaultAsync(p => p.FirstName == model.PatientFirstName && p.LastName == model.PatientLastName);
-
+                var patient = await _appointmentService
+                    .GetPatientByNameAsync(model.PatientFirstName, model.PatientLastName);
                 if (patient == null)
                 {
                     ModelState.AddModelError("", "The specified patient could not be found.");
                     return View(model);
                 }
 
-                Appointment appointment = new Appointment()
-                {
-                    Id = model.Id,
-                    PractitionerId = practitioner.Id,
-                    PatientId = patient.Id,
-                    Description = model.Description,
-                    StartDate = appointmentStartDate,
-                    EndDate = appointmentEndDate
-                };
+                model.PatientId = patient.Id;
 
-                // Add the appointment to the database
-                _dbContext.Appointments.Add(appointment);
-                var result = await _dbContext.SaveChangesAsync();
-                if (result == 0)
-                {
-                    Console.WriteLine("SaveChangesAsync did not insert any rows.");
-                }
+                await this._appointmentService.CreateNewAppointmentAsync(model);
 
                 return RedirectToAction(nameof(Index));
             }

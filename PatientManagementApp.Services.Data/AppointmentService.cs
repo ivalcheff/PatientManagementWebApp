@@ -6,15 +6,24 @@ using PatientManagementApp.Data.Repository.Interfaces;
 using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 using PatientManagementApp.Services.Mapping;
+using static PatientManagementApp.Common.ModelValidationConstraints;
+using System.Collections.Concurrent;
+using Appointment = PatientManagementApp.Data.Models.Appointment;
+using Patient = PatientManagementApp.Data.Models.Patient;
 
 namespace PatientManagementApp.Services.Data
 {
 
-    public class AppointmentService(IRepository<Appointment, int> appointmentRepository, UserManager<ApplicationUser> userManager) 
+    public class AppointmentService(IRepository<Appointment, int> appointmentRepository 
+                                    ,IRepository<Patient, Guid> patientRepository
+                                    ,IRepository<Practitioner, Guid> practitionerRepository
+                                    ,UserManager<ApplicationUser> userManager) 
         : IAppointmentService
     {
 
         private readonly IRepository<Appointment, int> _appointmentRepository = appointmentRepository;
+        private readonly IRepository<Practitioner, Guid> _practitionerRepository = practitionerRepository;
+        private readonly IRepository<Patient, Guid> _patientRepository = patientRepository;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
         public async Task<IEnumerable<AppointmentInfoViewModel>> IndexAllOrderedByDateAsync(Guid userId)
@@ -44,16 +53,58 @@ namespace PatientManagementApp.Services.Data
             return appointment;
         }
 
-        public Task<EditAppointmentViewModel> EditAppointmentByIdAsync(int id, Guid userId)
+      
+
+        public async Task CreateNewAppointmentAsync(CreateAppointmentViewModel model)
+        {
+            if (model.PatientId == Guid.Empty)
+            {
+                throw new ArgumentException("Invalid PatientId");
+            }
+
+            Appointment appointment = new Appointment();
+            
+            AutoMapperConfig.MapperInstance.Map(model, appointment);
+
+            await this._appointmentRepository.AddAsync(appointment);
+
+        }
+
+
+
+
+         public Task<EditAppointmentViewModel> EditAppointmentByIdAsync(int id, Guid userId)
         {
             throw new NotImplementedException();
         }
 
 
-        public Task CreateNewAppointmentAsync(CreateAppointmentViewModel model, Guid userId)
+
+        public async Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            return await _practitionerRepository
+                .GetAllAttached()
+                .FirstOrDefaultAsync(p => p.Id == userId);
         }
-       
+
+        public async Task<Practitioner?> GetPractitionerByIdAsync(Guid practitionerId)
+        {
+            return await _practitionerRepository
+                .GetAllAttached()
+                .FirstOrDefaultAsync(p => p.Id == practitionerId);
+        }
+
+        public async Task<Patient?> GetPatientByNameAsync(string firstName, string lastName)
+        {
+            return await _patientRepository
+                .GetAllAttached()
+                .FirstOrDefaultAsync(p => p.FirstName == firstName && p.LastName == lastName);
+        }
+
+        public async Task CreateNewAppointmentAsync(Appointment appointment)
+        {
+            await this._appointmentRepository.AddAsync(appointment);
+        }
+
     }
 }

@@ -67,24 +67,19 @@ namespace PatientManagementApp.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             var userId = user?.Id;
 
-            bool isTreatmentStartDateValid = DateTime.TryParseExact(model.TreatmentStartDate,DateFormat,
-                CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime treatmentStartDate);
-
-            if (!isTreatmentStartDateValid)
+            if (!ValidateDate(model.TreatmentStartDate, DateFormat, out DateTime treatmentStartData,
+                    out string validationMessage))
             {
-                this.ModelState.AddModelError(nameof(model.TreatmentStartDate),
-                    $"The date should be in the following format: {DateFormat}");
+                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), validationMessage);
                 return this.View(model);
+
             }
 
-            bool isDateOfBirthValid = DateTime.TryParseExact(model.DateOfBirth, DateFormat,
-                CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
-
-            if (!isDateOfBirthValid)
+            if (!ValidateDate(model.DateOfBirth, DateFormat, out DateTime dateOfBirth, out string birthdayValidationMessage))
             {
-                this.ModelState.AddModelError(nameof(model.DateOfBirth),
-                    $"The date should be in the following format:{DateFormat}");
+                this.ModelState.AddModelError(nameof(model.DateOfBirth), birthdayValidationMessage);
                 return this.View(model);
+
             }
 
             if (!ModelState.IsValid)
@@ -101,7 +96,7 @@ namespace PatientManagementApp.Web.Controllers
                 BirthDate = dateOfBirth,
                 Age = model.Age,
                 Gender = model.Gender,
-                //TODO add diagnoses
+                Diagnosis = model.Diagnosis,
                 TreatmentStartDate = dateOfBirth,
                 ReasonForVisit = model.ReasonForVisit,
                 ReferredBy = model.ReferredBy,
