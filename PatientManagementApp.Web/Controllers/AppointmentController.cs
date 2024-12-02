@@ -1,10 +1,7 @@
-﻿using System.Globalization;
-
+﻿
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 
 using PatientManagementApp.Data;
@@ -26,7 +23,7 @@ namespace PatientManagementApp.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IAppointmentService _appointmentService = appointmentService;
 
-        // GET: AppointmentController
+
         [HttpGet]
         public async Task<ActionResult> Index()
         {
@@ -77,7 +74,7 @@ namespace PatientManagementApp.Web.Controllers
             if (practitioner == null)
             {
                 ModelState.AddModelError("", "You must be registered as a practitioner to create an appointment.");
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             var model = new CreateAppointmentViewModel()

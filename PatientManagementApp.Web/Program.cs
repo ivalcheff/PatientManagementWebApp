@@ -48,6 +48,7 @@ namespace PatientManagementApp.Web
 
             builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+            builder.Services.AddScoped<IPatientService, PatientService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

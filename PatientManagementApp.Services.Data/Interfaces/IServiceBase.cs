@@ -11,6 +11,6 @@ namespace PatientManagementApp.Services.Data.Interfaces
         Task<Practitioner?> GetPractitionerByIdAsync(Guid practitionerId);
 
 
-        Task<Patient?> GetPatientByNameAsync(string firstName, string lastName);
+       
     }
 }

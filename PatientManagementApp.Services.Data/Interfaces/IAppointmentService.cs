@@ -15,6 +15,7 @@ namespace PatientManagementApp.Services.Data.Interfaces
         Task<AppointmentInfoViewModel> GetAppointmentDetailsByIdAsync(int id, Guid userId);
 
         Task<EditAppointmentViewModel> EditAppointmentByIdAsync(int id, Guid userId);
+        Task<Patient?> GetPatientByNameAsync(string firstName, string lastName);
 
     }
 }

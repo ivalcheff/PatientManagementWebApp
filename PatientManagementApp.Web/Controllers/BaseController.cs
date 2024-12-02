@@ -5,6 +5,17 @@ namespace PatientManagementApp.Web.Controllers
 {
     public class BaseController : Controller
     {
+
+        ////how to check if a string id is valid
+        //Guid patientGuid = Guid.Empty;
+        //bool isGuidValid = this.IsGuidValid(id, ref patientGuid);
+
+        //if (!isGuidValid)
+        //{
+        //    return this.RedirectToAction(nameof(Index));
+        //}
+
+
         protected bool IsGuidValid(string id, ref Guid patientGuid)
         {
             //non-existing parameter in the URL

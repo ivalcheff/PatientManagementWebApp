@@ -1,14 +1,12 @@
 ﻿
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc.Rendering;
+
 using PatientManagementApp.Data.Models;
-using PatientManagementApp.Common;
 using static PatientManagementApp.Common.Enums;
-using System.ComponentModel.DataAnnotations;
+using PatientManagementApp.Services.Mapping;
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
-    public class PatientDetailsViewModel
+    public class PatientDetailsViewModel:IMapFrom<Patient>
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
