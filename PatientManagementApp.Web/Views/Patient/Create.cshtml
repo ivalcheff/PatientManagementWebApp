@@ -37,7 +37,7 @@
     </div>
     <div>
         <label asp-for="DateOfBirth">Date Of Birth</label>
-        <input asp-for="DateOfBirth"  class="form-control" value="@DateTime.UtcNow.ToString(DateFormat)"/>
+        <input asp-for="DateOfBirth"  class="form-control" value="@DateTime.UtcNow.ToString(DateFormatString)"/>
         <span asp-validation-for="DateOfBirth" class="text-danger"></span>
     </div>
     <div>
@@ -49,8 +49,13 @@
     <p><strong>Current Treatment Information</strong> </p>
     <div>
         <label asp-for="TreatmentStartDate">Treatment Start Date</label>
-        <input asp-for="TreatmentStartDate" class="form-control" value="@DateTime.UtcNow.ToString(DateFormat)" />
+        <input asp-for="TreatmentStartDate" class="form-control" value="@DateTime.UtcNow.ToString(DateFormatString)" />
         <span asp-validation-for="TreatmentStartDate" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="TreatmentEndDate">Treatment End Date</label>
+        <input asp-for="TreatmentEndDate" class="form-control" value="@DateTime.UtcNow.ToString(DateFormatString)" />
+        <span asp-validation-for="TreatmentEndDate" class="text-danger"></span>
     </div>
     <div>
         <label asp-for="ImportantInfo">Important Information About Patient</label>

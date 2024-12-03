@@ -1,9 +1,6 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
+
 using PatientManagementApp.Data.Models;
-using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 
 

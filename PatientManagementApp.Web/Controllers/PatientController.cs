@@ -1,17 +1,14 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
-using PatientManagementApp.Common;
+
 using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Web.ViewModels.PatientViewModels;
-using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
+
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.Enums;
 
@@ -20,8 +17,8 @@ namespace PatientManagementApp.Web.Controllers
 {
     [Authorize]
     public class PatientController(ApplicationDbContext dbContext
-        ,IPatientService patientService
-        ,UserManager<ApplicationUser> userManager)
+                                    ,IPatientService patientService
+                                    ,UserManager<ApplicationUser> userManager) 
         : BaseController
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
@@ -37,12 +34,26 @@ namespace PatientManagementApp.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             var userId = user!.Id;
 
-            IEnumerable<PatientDetailsViewModel> patients = 
-                await this._patientService
-                .IndexAllFromCurrentUser(userId);
+            // Check if the user has the Admin role
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            IEnumerable<PatientDetailsViewModel> patients;
+
+            if (isAdmin)
+            {
+                patients = await this._patientService.IndexAllPatientsAsync();
+                ViewBag.Title = "All Patients"; 
+            }
+            else
+            {
+                // Get only the patients of the current user
+                patients = await this._patientService.IndexAllFromCurrentUser(userId);
+                ViewBag.Title = "My Patients"; 
+            }
 
             return View(patients);
         }
+
 
 
         //DETAILS
@@ -66,6 +77,7 @@ namespace PatientManagementApp.Web.Controllers
             return this.View(patient);
         }
 
+
         //CREATE NEW PATIENT
 
         [HttpGet]
@@ -83,43 +95,31 @@ namespace PatientManagementApp.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             var userId = user!.Id;
 
-            if (!ValidateDate(model.TreatmentStartDate, DateFormat, out DateTime treatmentStartDate,
-                    out string validationMessage))
-            {
-                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), validationMessage);
-                return this.View(model);
-
-            }
-
-            if (!ValidateDate(model.DateOfBirth, DateFormat, out DateTime dateOfBirth, out string birthdayValidationMessage))
-            {
-                this.ModelState.AddModelError(nameof(model.DateOfBirth), birthdayValidationMessage);
-                return this.View(model);
-
-            }
-
             if (!ModelState.IsValid)
             {
+                model.GenderOptions = GetGenderOptions();
+                model.PatientStatusOptions = GetStatusOptions();
                 return this.View(model);
             }
 
-            model.GenderOptions = GetGenderOptions();
-            model.PatientStatusOptions = GetStatusOptions();
+            bool result = await this._patientService.AddNewPatientAsync(model, userId);
 
-            await this._patientService.AddNewPatientAsync(model, dateOfBirth, treatmentStartDate, userId);
+            if (!result)
+            {
+                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), $"The date should be in the following format: {DateFormatString}");
+                model.GenderOptions = GetGenderOptions();
+                model.PatientStatusOptions = GetStatusOptions();
+                return this.View(model);
+            }
 
             return this.RedirectToAction(nameof(Index));
         }
-
-
-
 
 
         //EDIT PATIENT
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-
             var patient = await _dbContext.Patients
                 .Where(p => p.Id == id)
                 .Where(p => p.IsActive == true)
@@ -134,9 +134,9 @@ namespace PatientManagementApp.Web.Controllers
                     Gender = p.Gender,
                     Email = p.Email,
                     PhoneNumber = p.PhoneNumber,
-                    DateOfBirth = p.BirthDate.ToString(DateFormat),
-                    TreatmentStartDate = p.TreatmentStartDate.ToString(DateFormat),
-                    TreatmentEndDate = p.TreatmentEndDate.ToString(DateFormat),
+                    DateOfBirth = p.BirthDate.ToString(DateFormatString),
+                    TreatmentStartDate = p.TreatmentStartDate.ToString(DateFormatString),
+                    TreatmentEndDate = p.TreatmentEndDate.ToString(DateFormatString),
                     ReasonForVisit = p.ReasonForVisit,
                     ReferredBy = p.ReferredBy,
                     ImportantInfo = p.ImportantInfo,
@@ -162,34 +162,32 @@ namespace PatientManagementApp.Web.Controllers
                 model.GenderOptions = GetGenderOptions();
                 model.PatientStatusOptions = GetStatusOptions();
                 return View(model);
-
             }
 
-            if (DateTime.TryParseExact(model.TreatmentStartDate, DateFormat, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out var treatmentStartDate) == false)
+            if (!ValidateDate(model.TreatmentStartDate, DateFormatString, out DateTime treatmentStartDate,
+                    out string validationMessage))
             {
-                ModelState.AddModelError(nameof(model.TreatmentStartDate), "Invalid date format");
+                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), validationMessage);
                 model.GenderOptions = GetGenderOptions();
                 model.PatientStatusOptions = GetStatusOptions();
-                return View(model);
+                return this.View(model);
             }
 
-            if (DateTime.TryParseExact(model.TreatmentEndDate, DateFormat, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out var treatmentEndDate) == false)
+            if (!ValidateDate(model.TreatmentEndDate, DateFormatString, out DateTime treatmentEndDate,
+                    out string endDateValidationMessage))
             {
-                ModelState.AddModelError(nameof(model.TreatmentEndDate), "Invalid date format");
+                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), endDateValidationMessage);
                 model.GenderOptions = GetGenderOptions();
                 model.PatientStatusOptions = GetStatusOptions();
-                return View(model);
+                return this.View(model);
             }
 
-            if (DateTime.TryParseExact(model.DateOfBirth, DateFormat, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out var birthDate) == false)
+            if (!ValidateDate(model.DateOfBirth, DateFormatString, out DateTime dateOfBirth, out string birthdayValidationMessage))
             {
-                ModelState.AddModelError(nameof(model.DateOfBirth), "Invalid date format");
+                this.ModelState.AddModelError(nameof(model.DateOfBirth), birthdayValidationMessage);
                 model.GenderOptions = GetGenderOptions();
                 model.PatientStatusOptions = GetStatusOptions();
-                return View(model);
+                return this.View(model);
             }
 
             Patient? patient = await _dbContext
@@ -203,7 +201,7 @@ namespace PatientManagementApp.Web.Controllers
             patient.PhoneNumber = model.PhoneNumber;
             patient.Age = model.Age;
             patient.Gender = model.Gender;
-            patient.BirthDate = birthDate;
+            patient.BirthDate = dateOfBirth;
             patient.TreatmentStartDate = treatmentStartDate;
             patient.TreatmentEndDate = treatmentEndDate;
             patient.ReasonForVisit = model.ReasonForVisit;

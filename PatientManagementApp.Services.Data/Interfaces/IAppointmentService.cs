@@ -5,10 +5,12 @@ using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 
 namespace PatientManagementApp.Services.Data.Interfaces
 {
-    public interface IAppointmentService : IServiceBase
+    public interface IAppointmentService 
     {
         Task<IEnumerable<AppointmentInfoViewModel>> IndexAllOrderedByDateAsync(Guid userId);
-       
+        Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId);
+
+        Task<Practitioner?> GetPractitionerByIdAsync(Guid practitionerId);
 
         Task CreateNewAppointmentAsync(CreateAppointmentViewModel model);
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using static PatientManagementApp.Common.Enums;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Data.Repository.Interfaces;
@@ -14,14 +15,14 @@ namespace PatientManagementApp.Services.Data
 {
     public class PatientService(IRepository<Patient, Guid> patientRepository
                               ,IRepository<Practitioner, Guid> practitionerRepository
-                              ,UserManager<ApplicationUser> userManager) : IPatientService
+                              ,IRepository<EmergencyContact, Guid> emergencyContactRepository
+                              ,UserManager<ApplicationUser> userManager)
+        : BaseService , IPatientService
     {
-
         private readonly IRepository<Patient, Guid> _patientRepository = patientRepository;
         private readonly IRepository<Practitioner, Guid> _practitionerRepository = practitionerRepository;
-
+        private readonly IRepository<EmergencyContact, Guid> _emergencyContactRepository = emergencyContactRepository;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-
 
         public async Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId)
         {
@@ -37,6 +38,20 @@ namespace PatientManagementApp.Services.Data
                 .FirstOrDefaultAsync(p => p.Id == practitionerId);
         }
 
+
+        public async Task<IEnumerable<PatientDetailsViewModel>> IndexAllPatientsAsync()
+        {
+            var patients = await this._patientRepository
+                .GetAllAttached()
+                .Where(p => p.IsActive)
+                .AsNoTracking()
+                .OrderBy(p => p.FirstName)
+                .ThenBy(p => p.LastName)
+                .To<PatientDetailsViewModel>()
+                .ToListAsync();
+
+            return patients;
+        }
 
         public async Task<IEnumerable<PatientDetailsViewModel>> IndexAllFromCurrentUser(Guid userId)
         {
@@ -67,45 +82,80 @@ namespace PatientManagementApp.Services.Data
             return patient;
         }
 
-        public async Task AddNewPatientAsync(CreatePatientViewModel model, DateTime dateOfBirth, DateTime treatmentStartDate, Guid userId)
-        {
-            Patient patient = new Patient()
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber,
-                Email = model.Email,
-                BirthDate = dateOfBirth,
-                Age = model.Age,
-                Gender = model.Gender,
-                Diagnosis = model.Diagnosis,
-                TreatmentStartDate = treatmentStartDate,
-                ReasonForVisit = model.ReasonForVisit,
-                ReferredBy = model.ReferredBy,
-                ImportantInfo = model.ImportantInfo,
-                EmergencyContact = new EmergencyContact()
-                {
-                    Name = model.EmergencyContactName,
-                    PhoneNumber = model.EmergencyContactPhone,
-                    Relationship = model.EmergencyContactRelationship
-                },
-                Status = model.Status,
-                IsActive = true,
-                PractitionerId = (Guid)userId,
 
+        public async Task<EditPatientViewModel> EditPatientByIdAsync(Guid id, Guid userId)
+        {
+            throw new NotImplementedException();
+
+            //    Patient? patient = await this._patientRepository
+            //        .GetAllAttached()
+            //        .Include(p => p.EmergencyContact)
+            //        .FirstOrDefaultAsync(p => p.Id == id);
+
+            //    patient.FirstName = model.FirstName;
+            //    patient.LastName = model.LastName;
+            //    patient.Email = model.Email;
+            //    patient.PhoneNumber = model.PhoneNumber;
+            //    patient.Age = model.Age;
+            //    patient.Gender = model.Gender;
+            //    patient.BirthDate = dateOfBirth;
+            //    patient.TreatmentStartDate = treatmentStartDate;
+            //    patient.TreatmentEndDate = treatmentEndDate;
+            //    patient.ReasonForVisit = model.ReasonForVisit;
+            //    patient.ReferredBy = model.ReferredBy;
+            //    patient.ImportantInfo = model.ImportantInfo;
+            //    patient.Status = model.Status;
+            //    patient.Feedback = model.Feedback;
+            //    patient.EmergencyContact.Name = model.EmergencyContactName;
+            //    patient.EmergencyContact.PhoneNumber = model.EmergencyContactPhoneNumber;
+            //    patient.EmergencyContact.Relationship = model.EmergencyContactRelationship;
+
+
+            //    await this._patientRepository.UpdateAsync(patient);
+        }
+
+        public async Task<bool> AddNewPatientAsync(CreatePatientViewModel model, Guid userId)
+        {
+            if (!ValidateDate(model.TreatmentStartDate, DateFormatString, out DateTime treatmentStartDate))
+            {
+                return false;
+            }
+
+            if (!ValidateDate(model.DateOfBirth, DateFormatString, out DateTime dateOfBirth))
+            {
+                return false;
+            }
+
+            if (!ValidateDate(model.TreatmentEndDate, DateFormatString, out DateTime treatmentEndDate))
+            {
+                return false;
+            }
+
+            EmergencyContact emergencyContact = new EmergencyContact
+            {
+                Name = model.EmergencyContactName,
+                PhoneNumber = model.EmergencyContactPhone,
+                Relationship = model.EmergencyContactRelationship
             };
 
-            await this._patientRepository.AddAsync(patient);
 
+            Patient patient = new Patient();
+            AutoMapperConfig.MapperInstance.Map(model, patient);
+            patient.BirthDate = dateOfBirth;
+            patient.TreatmentStartDate = treatmentStartDate;
+            patient.TreatmentEndDate = treatmentEndDate;
+            patient.EmergencyContact = emergencyContact;
+            patient.PractitionerId = userId;
+            patient.IsActive = true;
+
+            await this._patientRepository.AddAsync(patient);
+            return true;
         }
 
         
 
-        public async Task<EditPatientViewModel> EditPatientByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
 
+        /*
         public List<SelectListItem> GetGenderOptions()
         {
             var gendersList = Enum.GetValues(typeof(Gender))
@@ -133,5 +183,6 @@ namespace PatientManagementApp.Services.Data
 
             return patientStatusList;
         }
+        */
     }
 }

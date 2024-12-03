@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using PatientManagementApp.Common;
 using static PatientManagementApp.Common.Enums;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
@@ -7,15 +8,17 @@ using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
 using static PatientManagementApp.Common.ModelValidationConstraints.EmergencyContact;
 using static PatientManagementApp.Common.EntityValidationMessages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using PatientManagementApp.Data.Models;
+using PatientManagementApp.Services.Mapping;
 
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
-    public class CreatePatientViewModel
+    public class CreatePatientViewModel : IMapTo<Patient>, IHaveCustomMappings
     {
         public CreatePatientViewModel()
         {
-            this.TreatmentStartDate = DateTime.Now.ToString(DateFormat);
+            this.TreatmentStartDate = DateTime.UtcNow.ToString(DateFormatString);
         }
 
         [Required(ErrorMessage = FirstNameIsRequired)]
@@ -50,6 +53,8 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
        
         [Required] 
         public string TreatmentStartDate { get; set; }
+
+        public string? TreatmentEndDate { get; set; }
 
 
         [MinLength(ReasonForVisitMinLength)]
@@ -88,5 +93,15 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [MaxLength(EmergencyContactRelationshipMaxLength)]
         public string? EmergencyContactRelationship { get; set; }
 
+        public void CreateMappings(IProfileExpression configuration)
+        {
+            configuration.CreateMap<CreatePatientViewModel, Patient>()
+                .ForMember(d => d.BirthDate, x => x.Ignore())
+                .ForMember(d => d.TreatmentStartDate, x => x.Ignore())
+                .ForMember(d=> d.TreatmentEndDate, x => x.Ignore())
+                .ForMember(d => d.PractitionerId, x => x.Ignore());
+
+
+        }
     }
 }

@@ -63,6 +63,8 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 
 
         //TODO add Medications
+        //TODO add Notes
+        //TODO add Flies
 
 
         [MinLength(ReferredByMinLength)]

@@ -29,7 +29,14 @@
                 <label asp-for="Specialties"></label>
                 <select asp-for="SelectedSpecialties" asp-items="Model.Specialties" class="form-control" multiple="multiple"></select>
             </div>
-            
+            @*  SPECIALTIES
+                <div class="mb-3">
+                <label asp-for="@Model.GenreId" class="form-label-add-edit">Select Genre</label>
+                <select asp-for="@Model.GenreId" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Genres, "Id", "Name"))">
+                    <option value="">Select Genre...</option>
+                </select>
+                <span asp-validation-for="@Model.GenreId" class="text-danger"></span>
+            </div> *@
             <h3>Contact information</h3>
             <div class="mb-3">
                 <label asp-for="@Model.Email" class="form-label-add-edit">Email</label>

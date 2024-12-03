@@ -6,8 +6,7 @@ using PatientManagementApp.Data.Repository.Interfaces;
 using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 using PatientManagementApp.Services.Mapping;
-using static PatientManagementApp.Common.ModelValidationConstraints;
-using System.Collections.Concurrent;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using Appointment = PatientManagementApp.Data.Models.Appointment;
 using Patient = PatientManagementApp.Data.Models.Patient;
 
@@ -18,7 +17,8 @@ namespace PatientManagementApp.Services.Data
                                     ,IRepository<Patient, Guid> patientRepository
                                     ,IRepository<Practitioner, Guid> practitionerRepository
                                     ,UserManager<ApplicationUser> userManager) 
-        : IAppointmentService
+        : BaseService, IAppointmentService
+
     {
 
         private readonly IRepository<Appointment, int> _appointmentRepository = appointmentRepository;
@@ -26,6 +26,8 @@ namespace PatientManagementApp.Services.Data
         private readonly IRepository<Patient, Guid> _patientRepository = patientRepository;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
+
+        //INDEX
         public async Task<IEnumerable<AppointmentInfoViewModel>> IndexAllOrderedByDateAsync(Guid userId)
         {
             var appointments = await this._appointmentRepository
@@ -39,7 +41,7 @@ namespace PatientManagementApp.Services.Data
             return appointments;
         }
 
-
+        //DETAILS
         public async Task<AppointmentInfoViewModel> GetAppointmentDetailsByIdAsync(int id, Guid userId)
         {
             
@@ -56,6 +58,7 @@ namespace PatientManagementApp.Services.Data
         }
 
       
+        //CREATE
 
         public async Task CreateNewAppointmentAsync(CreateAppointmentViewModel model)
         {
@@ -72,16 +75,22 @@ namespace PatientManagementApp.Services.Data
 
         }
 
+        public async Task CreateNewAppointmentAsync(Appointment appointment)
+        {
+            await this._appointmentRepository.AddAsync(appointment);
+        }
 
 
 
-         public Task<EditAppointmentViewModel> EditAppointmentByIdAsync(int id, Guid userId)
+        //EDIT
+
+        public Task<EditAppointmentViewModel> EditAppointmentByIdAsync(int id, Guid userId)
          {
             throw new NotImplementedException();
          }
 
 
-
+        //GET PRACTITIONER
         public async Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId)
         {
             return await _practitionerRepository
@@ -96,6 +105,8 @@ namespace PatientManagementApp.Services.Data
                 .FirstOrDefaultAsync(p => p.Id == practitionerId);
         }
 
+
+        //GET PATIENT
         public async Task<Patient?> GetPatientByNameAsync(string firstName, string lastName)
         {
             return await _patientRepository
@@ -103,10 +114,9 @@ namespace PatientManagementApp.Services.Data
                 .FirstOrDefaultAsync(p => p.FirstName == firstName && p.LastName == lastName);
         }
 
-        public async Task CreateNewAppointmentAsync(Appointment appointment)
-        {
-            await this._appointmentRepository.AddAsync(appointment);
-        }
+
+
+       
 
     }
 }

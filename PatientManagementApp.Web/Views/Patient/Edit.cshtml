@@ -4,7 +4,7 @@
 
 @{
     ViewBag.Title = "Edit Patient Details";
-    var today = DateTime.UtcNow.ToString(DateFormat);
+    var today = DateTime.UtcNow.ToString(DateFormatString);
 }
 
 
@@ -87,14 +87,6 @@
                 <input asp-for="@Model.TreatmentEndDate" class="form-control" aria-required="true" value="@(string.IsNullOrEmpty(Model.TreatmentStartDate) ? today : Model.TreatmentStartDate)" />
                 <span asp-validation-for="@Model.TreatmentEndDate" class="text-danger"></span>
             </div>
-            @*  DIAGNOSES
-                <div class="mb-3">
-                <label asp-for="@Model.GenreId" class="form-label-add-edit">Select Genre</label>
-                <select asp-for="@Model.GenreId" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Genres, "Id", "Name"))">
-                    <option value="">Select Genre...</option>
-                </select>
-                <span asp-validation-for="@Model.GenreId" class="text-danger"></span>
-            </div> *@
             <div class="mb-3">
                 <label asp-for="@Model.Feedback" class="form-label-add-edit">Feedback</label>
                 <textarea asp-for="@Model.Feedback" class="form-control" aria-required="false" placeholder="Feedback from patient (optional)"  rows="5"></textarea>

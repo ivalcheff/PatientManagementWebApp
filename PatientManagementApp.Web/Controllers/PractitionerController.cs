@@ -103,8 +103,8 @@ namespace PatientManagementApp.Web.Controllers
                         {
                             Id = a.Id, 
                             Description = a.Description,
-                            StartDate = a.StartDate.ToString(DateFormat),
-                            EndDate = a.EndDate.ToString(DateFormat),
+                            StartDate = a.StartDate.ToString(DateFormatString),
+                            EndDate = a.EndDate.ToString(DateFormatString),
                             PatientFirstName = a.Patient.FirstName,
                             PatientLastName = a.Patient.LastName
                         }).ToList()
