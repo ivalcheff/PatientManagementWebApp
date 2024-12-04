@@ -131,8 +131,10 @@ namespace PatientManagementApp.Data.Repository
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"UpdateAsync failed: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
                 return false;
             }
         }

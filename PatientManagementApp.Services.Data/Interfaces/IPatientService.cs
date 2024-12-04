@@ -13,8 +13,8 @@ namespace PatientManagementApp.Services.Data.Interfaces
 
         Task<PatientDetailsViewModel> GetPatientDetailsByIdAsync(Guid id);
 
-        Task<EditPatientViewModel> EditPatientByIdAsync(Guid id, Guid userId);
-
+        Task<EditPatientViewModel?> GetEditPatientModelByIdAsync(Guid id);
+        Task<bool> EditPatientAsync(EditPatientViewModel model);
 
 
         //List<SelectListItem> GetGenderOptions();

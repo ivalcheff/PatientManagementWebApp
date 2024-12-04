@@ -12,11 +12,13 @@ namespace PatientManagementApp.Services.Data.Interfaces
 
         Task<Practitioner?> GetPractitionerByIdAsync(Guid practitionerId);
 
-        Task CreateNewAppointmentAsync(CreateAppointmentViewModel model);
+        Task<bool> CreateNewAppointmentAsync(CreateAppointmentViewModel model);
 
         Task<AppointmentInfoViewModel> GetAppointmentDetailsByIdAsync(int id, Guid userId);
 
-        Task<EditAppointmentViewModel> EditAppointmentByIdAsync(int id, Guid userId);
+        Task<EditAppointmentViewModel> GetEditAppointmentModelByIdAsync(int id, Guid userId);
+
+        Task<bool> EditAppointmentAsync(EditAppointmentViewModel model);
         Task<Patient?> GetPatientByNameAsync(string firstName, string lastName);
 
     }

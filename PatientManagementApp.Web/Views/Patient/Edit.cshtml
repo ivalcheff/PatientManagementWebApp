@@ -14,6 +14,8 @@
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
         <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="PractitionerId" />
+            <input type="hidden" asp-for="EmergencyContactId" />
             <h3>Personal Details</h3>
             <div class="mb-3">
                 <label asp-for="@Model.FirstName" class="form-label-add-edit">First Name</label>
@@ -32,7 +34,7 @@
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.Age" class="form-label-add-edit">Age</label>
-                <input asp-for="@Model.Age" class="form-control" aria-required="true" />
+                <input asp-for="@Model.Age" class="form-control" aria-required="true"/>
                 <span asp-validation-for="@Model.Age" class="text-danger"></span>
             </div>
             <div>
@@ -84,7 +86,7 @@
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.TreatmentEndDate" class="form-label-add-edit">Treatment end date</label>
-                <input asp-for="@Model.TreatmentEndDate" class="form-control" aria-required="true" value="@(string.IsNullOrEmpty(Model.TreatmentStartDate) ? today : Model.TreatmentStartDate)" />
+                <input asp-for="@Model.TreatmentEndDate" class="form-control" aria-required="true" value="@(string.IsNullOrEmpty(Model.TreatmentStartDate) ? today : Model.TreatmentStartDate)"/>
                 <span asp-validation-for="@Model.TreatmentEndDate" class="text-danger"></span>
             </div>
             <div class="mb-3">
@@ -95,20 +97,31 @@
             <h3>Emergency Contact</h3>
             <div class="mb-3">
                 <label asp-for="@Model.EmergencyContactName" class="form-label-add-edit">Name</label>
-                <input asp-for="@Model.EmergencyContactName" class="form-control" aria-required="false" />
+                <input asp-for="@Model.EmergencyContactName" class="form-control" aria-required="false"/>
                 <span asp-validation-for="@Model.EmergencyContactName" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.EmergencyContactPhoneNumber" class="form-label-add-edit">Phone number</label>
-                <input asp-for="@Model.EmergencyContactPhoneNumber" class="form-control" aria-required="false" />
+                <input asp-for="@Model.EmergencyContactPhoneNumber" class="form-control" aria-required="false"/>
                 <span asp-validation-for="@Model.EmergencyContactPhoneNumber" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.EmergencyContactRelationship" class="form-label-add-edit">Relationship</label>
-                <input asp-for="@Model.EmergencyContactRelationship" class="form-control" aria-required="false" />
+                <input asp-for="@Model.EmergencyContactRelationship" class="form-control" aria-required="false"/>
                 <span asp-validation-for="@Model.EmergencyContactRelationship" class="text-danger"></span>
             </div>
             <div class="mb-3">
+                <h3>Practitioner</h3>
+                <div class="mb-3">
+                    <label asp-for="@Model.PractitionerFirstName" class="form-label-add-edit">First Name</label>
+                    <input asp-for="@Model.PractitionerFirstName" class="form-control" aria-required="true"/>
+                    <span asp-validation-for="@Model.PractitionerFirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.PractitionerLastName" class="form-label-add-edit">Last Name</label>
+                    <input asp-for="@Model.PractitionerLastName" class="form-control" aria-required="true"/>
+                    <span asp-validation-for="@Model.PractitionerLastName" class="text-danger"></span>
+                </div>
                 <input class="btn btn-warning btn-dark-text mb-2 w-100 py-3 fw-bold rounded" type="submit" value="Confirm"/>
             </div>
         </form>

@@ -1,7 +1,10 @@
 ﻿
 
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using PatientManagementApp.Data.Models;
+using PatientManagementApp.Services.Mapping;
 using static PatientManagementApp.Common.Enums;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;
@@ -10,10 +13,23 @@ using static PatientManagementApp.Common.EntityValidationMessages;
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
-    public class EditPatientViewModel
+    public class EditPatientViewModel : IMapFrom<Patient>,IMapTo<Patient>, IHaveCustomMappings
     {
 
         public Guid Id { get; set; }
+        public Guid PractitionerId { get; set; }
+        public Guid EmergencyContactId { get; set; }
+
+        [Required]
+        [MinLength(FirstNameMinLength)]
+        [MaxLength(FirstNameMaxLength)]
+        public string PractitionerFirstName { get; set; } = null!;
+
+
+        [Required]
+        [MinLength(LastNameMinLength)]
+        [MaxLength(LastNameMaxLength)]
+        public string PractitionerLastName { get; set; } = null!;
 
         [Required(ErrorMessage = FirstNameIsRequired)]
         [MinLength(FirstNameMinLength)]
@@ -92,5 +108,24 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         [MinLength(EmergencyContactRelationshipMinLength)]
         [MaxLength(EmergencyContactRelationshipMaxLength)]
         public string? EmergencyContactRelationship { get; set; }
+
+        public void CreateMappings(IProfileExpression configuration)
+        {
+            configuration.CreateMap<Patient, EditPatientViewModel>()
+                .ForMember(d => d.DateOfBirth,
+                    x => x.MapFrom(s => s.BirthDate.ToString(DateFormatString)))
+                .ForMember(d => d.TreatmentStartDate,
+                    x => x.MapFrom(s => s.TreatmentStartDate.ToString(DateFormatString)))
+                .ForMember(d => d.TreatmentEndDate,
+                    x => x.MapFrom(s => s.TreatmentEndDate.ToString(DateFormatString)));
+
+
+            configuration.CreateMap<EditPatientViewModel, Patient>()
+                .ForMember(d => d.BirthDate, x => x.Ignore())
+                .ForMember(d => d.TreatmentStartDate, x => x.Ignore())
+                .ForMember(d => d.TreatmentEndDate, x => x.Ignore())
+                .ForMember(d => d.EmergencyContactId, x => x.Ignore())
+                .ForMember(d => d.PractitionerId, x=> x.Ignore());
+        }
     }
 }

@@ -6,9 +6,10 @@ using PatientManagementApp.Data.Repository.Interfaces;
 using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 using PatientManagementApp.Services.Mapping;
-using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using Appointment = PatientManagementApp.Data.Models.Appointment;
 using Patient = PatientManagementApp.Data.Models.Patient;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
+
 
 namespace PatientManagementApp.Services.Data
 {
@@ -18,7 +19,6 @@ namespace PatientManagementApp.Services.Data
                                     ,IRepository<Practitioner, Guid> practitionerRepository
                                     ,UserManager<ApplicationUser> userManager) 
         : BaseService, IAppointmentService
-
     {
 
         private readonly IRepository<Appointment, int> _appointmentRepository = appointmentRepository;
@@ -44,8 +44,6 @@ namespace PatientManagementApp.Services.Data
         //DETAILS
         public async Task<AppointmentInfoViewModel> GetAppointmentDetailsByIdAsync(int id, Guid userId)
         {
-            
-
             var appointment = await this._appointmentRepository
                 .GetAllAttached()
                 .Where(a => a.Id == id && a.PractitionerId == userId)
@@ -57,37 +55,68 @@ namespace PatientManagementApp.Services.Data
             return appointment;
         }
 
-      
+
+        //EDIT
+
+        public async Task<EditAppointmentViewModel> GetEditAppointmentModelByIdAsync(int id, Guid userId)
+        {
+            EditAppointmentViewModel? model = await this._appointmentRepository
+                .GetAllAttached()
+                .Include(a => a.Patient)
+                .To<EditAppointmentViewModel>()
+                .FirstOrDefaultAsync(a => a.Id == id && a.PractitionerId == userId);
+
+            return model;
+        }
+
+        public async Task<bool> EditAppointmentAsync(EditAppointmentViewModel model)
+        {
+            if (!ValidateDate(model.StartDate, AppointmentTimeFormat, out DateTime startTime))
+            {
+                return false;
+            }
+            if (!ValidateDate(model.EndDate, AppointmentTimeFormat, out DateTime endTime))
+            {
+                return false;
+            }
+
+            Appointment editedAppointment = AutoMapperConfig.MapperInstance.Map<Appointment>(model);
+            editedAppointment.StartDate = startTime;
+            editedAppointment.EndDate = endTime;
+
+            return await this._appointmentRepository.UpdateAsync(editedAppointment);
+        }
+
+
         //CREATE
 
-        public async Task CreateNewAppointmentAsync(CreateAppointmentViewModel model)
+        public async Task<bool> CreateNewAppointmentAsync(CreateAppointmentViewModel model)
         {
             if (model.PatientId == Guid.Empty)
             {
                 throw new ArgumentException("Invalid PatientId");
             }
 
+            if (!ValidateDate(model.StartDate, AppointmentTimeFormat, out DateTime appointmentStartDate))
+            {
+                return false;
+            }
+            if (!ValidateDate(model.EndDate, AppointmentTimeFormat, out DateTime appointmentEndDate))
+            {
+                return false;
+            }
+
             Appointment appointment = new Appointment();
             
             AutoMapperConfig.MapperInstance.Map(model, appointment);
+            appointment.StartDate = appointmentStartDate;
+            appointment.EndDate = appointmentEndDate;
 
             await this._appointmentRepository.AddAsync(appointment);
-
-        }
-
-        public async Task CreateNewAppointmentAsync(Appointment appointment)
-        {
-            await this._appointmentRepository.AddAsync(appointment);
+            return true;
         }
 
 
-
-        //EDIT
-
-        public Task<EditAppointmentViewModel> EditAppointmentByIdAsync(int id, Guid userId)
-         {
-            throw new NotImplementedException();
-         }
 
 
         //GET PRACTITIONER
@@ -113,10 +142,5 @@ namespace PatientManagementApp.Services.Data
                 .GetAllAttached()
                 .FirstOrDefaultAsync(p => p.FirstName == firstName && p.LastName == lastName);
         }
-
-
-
-       
-
     }
 }

@@ -1,8 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using static PatientManagementApp.Common.Enums;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 
 using PatientManagementApp.Data.Models;
@@ -70,7 +68,7 @@ namespace PatientManagementApp.Services.Data
 
         public async Task<PatientDetailsViewModel> GetPatientDetailsByIdAsync(Guid id)
         {
-            var patient = await this._patientRepository
+            PatientDetailsViewModel? patient = await this._patientRepository
                 .GetAllAttached()
                 .Where(p => p.Id == id)
                 .Include(p => p.EmergencyContact)
@@ -83,35 +81,46 @@ namespace PatientManagementApp.Services.Data
         }
 
 
-        public async Task<EditPatientViewModel> EditPatientByIdAsync(Guid id, Guid userId)
+        public async Task<EditPatientViewModel?> GetEditPatientModelByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            EditPatientViewModel? model = await this._patientRepository
+                .GetAllAttached()
+                .Include(p => p.EmergencyContact)
+                .Include(p =>p.Practitioner)
+                .To<EditPatientViewModel>()
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            //    Patient? patient = await this._patientRepository
-            //        .GetAllAttached()
-            //        .Include(p => p.EmergencyContact)
-            //        .FirstOrDefaultAsync(p => p.Id == id);
+            return model;
+        }
 
-            //    patient.FirstName = model.FirstName;
-            //    patient.LastName = model.LastName;
-            //    patient.Email = model.Email;
-            //    patient.PhoneNumber = model.PhoneNumber;
-            //    patient.Age = model.Age;
-            //    patient.Gender = model.Gender;
-            //    patient.BirthDate = dateOfBirth;
-            //    patient.TreatmentStartDate = treatmentStartDate;
-            //    patient.TreatmentEndDate = treatmentEndDate;
-            //    patient.ReasonForVisit = model.ReasonForVisit;
-            //    patient.ReferredBy = model.ReferredBy;
-            //    patient.ImportantInfo = model.ImportantInfo;
-            //    patient.Status = model.Status;
-            //    patient.Feedback = model.Feedback;
-            //    patient.EmergencyContact.Name = model.EmergencyContactName;
-            //    patient.EmergencyContact.PhoneNumber = model.EmergencyContactPhoneNumber;
-            //    patient.EmergencyContact.Relationship = model.EmergencyContactRelationship;
+        public async Task<bool> EditPatientAsync(EditPatientViewModel model)
+        {
+            if (!ValidateDate(model.TreatmentStartDate, DateFormatString, out DateTime treatmentStartDate))
+            {
+                return false;
+            }
 
+            if (!ValidateDate(model.DateOfBirth, DateFormatString, out DateTime dateOfBirth))
+            {
+                return false;
+            }
 
-            //    await this._patientRepository.UpdateAsync(patient);
+            if (!ValidateDate(model.TreatmentEndDate, DateFormatString, out DateTime treatmentEndDate))
+            {
+                return false;
+            }
+
+            Console.WriteLine("Dates have been validated");
+
+            Patient editedPatient = AutoMapperConfig.MapperInstance.Map<Patient>(model);
+            editedPatient.BirthDate = dateOfBirth;
+            editedPatient.TreatmentStartDate = treatmentStartDate;
+            editedPatient.TreatmentEndDate = treatmentEndDate;
+            editedPatient.PractitionerId = model.PractitionerId;
+            editedPatient.EmergencyContactId = model.EmergencyContactId;
+
+            return await this._patientRepository.UpdateAsync(editedPatient);
+
         }
 
         public async Task<bool> AddNewPatientAsync(CreatePatientViewModel model, Guid userId)
@@ -137,7 +146,6 @@ namespace PatientManagementApp.Services.Data
                 PhoneNumber = model.EmergencyContactPhone,
                 Relationship = model.EmergencyContactRelationship
             };
-
 
             Patient patient = new Patient();
             AutoMapperConfig.MapperInstance.Map(model, patient);

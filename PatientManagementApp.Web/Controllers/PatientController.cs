@@ -65,7 +65,8 @@ namespace PatientManagementApp.Web.Controllers
             {
                 return this.RedirectToAction(nameof(Index));
             }
-            var patient = await this._patientService
+
+            PatientDetailsViewModel? patient = await this._patientService
                 .GetPatientDetailsByIdAsync(id);
 
             if (patient == null)
@@ -120,42 +121,22 @@ namespace PatientManagementApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var patient = await _dbContext.Patients
-                .Where(p => p.Id == id)
-                .Where(p => p.IsActive == true)
-                .Include(p => p.EmergencyContact)
-                .AsNoTracking()
-                .Select(p => new EditPatientViewModel()
-                {
-                    Id = p.Id,
-                    FirstName = p.FirstName,
-                    LastName = p.LastName,
-                    Age = p.Age,
-                    Gender = p.Gender,
-                    Email = p.Email,
-                    PhoneNumber = p.PhoneNumber,
-                    DateOfBirth = p.BirthDate.ToString(DateFormatString),
-                    TreatmentStartDate = p.TreatmentStartDate.ToString(DateFormatString),
-                    TreatmentEndDate = p.TreatmentEndDate.ToString(DateFormatString),
-                    ReasonForVisit = p.ReasonForVisit,
-                    ReferredBy = p.ReferredBy,
-                    ImportantInfo = p.ImportantInfo,
-                    Status = p.Status,
-                    Feedback = p.Feedback,
-                    EmergencyContactName = p.EmergencyContact.Name,
-                    EmergencyContactPhoneNumber = p.EmergencyContact.PhoneNumber,
-                    EmergencyContactRelationship = p.EmergencyContact.Relationship
-                })
-                .FirstOrDefaultAsync();
+            EditPatientViewModel? model = await this._patientService
+                .GetEditPatientModelByIdAsync(id);
 
-            patient.GenderOptions = GetGenderOptions();
-            patient.PatientStatusOptions = GetStatusOptions();
+            if (model == null)
+            {
+                return this.RedirectToAction(nameof(Index));
+            }
 
-            return View(patient);
+            model.GenderOptions = GetGenderOptions();
+            model.PatientStatusOptions = GetStatusOptions();
+
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(EditPatientViewModel model, Guid id)
+        public async Task<IActionResult> Edit(EditPatientViewModel model)
         {
             if (ModelState.IsValid == false)
             {
@@ -164,58 +145,18 @@ namespace PatientManagementApp.Web.Controllers
                 return View(model);
             }
 
-            if (!ValidateDate(model.TreatmentStartDate, DateFormatString, out DateTime treatmentStartDate,
-                    out string validationMessage))
+            bool isUpdated = await this._patientService
+                .EditPatientAsync(model);
+
+            if (!isUpdated)
             {
-                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), validationMessage);
+                this.ModelState.AddModelError("", $"A problem occured when trying to update the patient");
                 model.GenderOptions = GetGenderOptions();
                 model.PatientStatusOptions = GetStatusOptions();
                 return this.View(model);
             }
 
-            if (!ValidateDate(model.TreatmentEndDate, DateFormatString, out DateTime treatmentEndDate,
-                    out string endDateValidationMessage))
-            {
-                this.ModelState.AddModelError(nameof(model.TreatmentStartDate), endDateValidationMessage);
-                model.GenderOptions = GetGenderOptions();
-                model.PatientStatusOptions = GetStatusOptions();
-                return this.View(model);
-            }
-
-            if (!ValidateDate(model.DateOfBirth, DateFormatString, out DateTime dateOfBirth, out string birthdayValidationMessage))
-            {
-                this.ModelState.AddModelError(nameof(model.DateOfBirth), birthdayValidationMessage);
-                model.GenderOptions = GetGenderOptions();
-                model.PatientStatusOptions = GetStatusOptions();
-                return this.View(model);
-            }
-
-            Patient? patient = await _dbContext
-                .Patients
-                .Include(p => p.EmergencyContact)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            patient.FirstName = model.FirstName;
-            patient.LastName = model.LastName;
-            patient.Email = model.Email;
-            patient.PhoneNumber = model.PhoneNumber;
-            patient.Age = model.Age;
-            patient.Gender = model.Gender;
-            patient.BirthDate = dateOfBirth;
-            patient.TreatmentStartDate = treatmentStartDate;
-            patient.TreatmentEndDate = treatmentEndDate;
-            patient.ReasonForVisit = model.ReasonForVisit;
-            patient.ReferredBy = model.ReferredBy;
-            patient.ImportantInfo = model.ImportantInfo;
-            patient.Status = model.Status;
-            patient.Feedback = model.Feedback;
-            patient.EmergencyContact.Name = model.EmergencyContactName;
-            patient.EmergencyContact.PhoneNumber = model.EmergencyContactPhoneNumber;
-            patient.EmergencyContact.Relationship = model.EmergencyContactRelationship;
-
-            await _dbContext.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = model.Id });
         }
 
 

@@ -1,12 +1,15 @@
 ﻿
 
+using AutoMapper;
 using PatientManagementApp.Data.Models;
-using static PatientManagementApp.Common.Enums;
 using PatientManagementApp.Services.Mapping;
+using static PatientManagementApp.Common.Enums;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
+
 
 namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 {
-    public class PatientDetailsViewModel:IMapFrom<Patient>
+    public class PatientDetailsViewModel:IMapFrom<Patient>, IHaveCustomMappings
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
@@ -43,5 +46,15 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         public List<FileUpload> Files { get; set; } = new List<FileUpload>();
         public List<PatientsMedications> PatientsMedications { get; set; } = new List<PatientsMedications>();
 
+        public void CreateMappings(IProfileExpression configuration)
+        {
+            configuration.CreateMap<Patient, PatientDetailsViewModel>()
+                .ForMember(d => d.DateOfBirth,
+                    x => x.MapFrom(s => s.BirthDate.ToString(DateFormatString)))
+                .ForMember(d => d.TreatmentStartDate, 
+                    x => x.MapFrom(s => s.TreatmentStartDate.ToString(DateFormatString)))
+                .ForMember(d => d.TreatmentEndDate, 
+                    x => x.MapFrom(s => s.TreatmentEndDate.ToString(DateFormatString)));
+        }
     }
 }

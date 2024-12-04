@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 using PatientManagementApp.Data;
@@ -25,7 +26,7 @@ namespace PatientManagementApp.Web.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
            var user = await _userManager.GetUserAsync(User);
            var userId = user!.Id;
@@ -41,7 +42,7 @@ namespace PatientManagementApp.Web.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             var user = await _userManager.GetUserAsync(User);
             var userId = user!.Id;
@@ -61,7 +62,7 @@ namespace PatientManagementApp.Web.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult> Create()
+        public async Task<IActionResult> Create()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -86,23 +87,10 @@ namespace PatientManagementApp.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(CreateAppointmentViewModel model)
+        public async Task<IActionResult> Create(CreateAppointmentViewModel model)
         {
             try
             {
-                if (!ValidateDate(model.StartDate, AppointmentTimeFormat, out DateTime appointmentStartDate,
-                        out string startDateValidationMessage))
-                {
-                    this.ModelState.AddModelError(nameof(model.StartDate), startDateValidationMessage);
-                    return this.View(model);
-                }
-
-                if (!ValidateDate(model.EndDate, AppointmentTimeFormat, out DateTime appointmentEndDate, out string endDateValidationMessage))
-                {
-                    this.ModelState.AddModelError(nameof(model.EndDate), endDateValidationMessage);
-                    return this.View(model);
-                }
-
                 if (!ModelState.IsValid)
                 {
                     return this.View(model);
@@ -117,7 +105,6 @@ namespace PatientManagementApp.Web.Controllers
                     return View(model);
                 }
 
-
                 // Lookup the patient by first name and last name
                 var patient = await _appointmentService
                     .GetPatientByNameAsync(model.PatientFirstName, model.PatientLastName);
@@ -129,51 +116,63 @@ namespace PatientManagementApp.Web.Controllers
 
                 model.PatientId = patient.Id;
 
-                await this._appointmentService.CreateNewAppointmentAsync(model);
+                bool result = await this._appointmentService.CreateNewAppointmentAsync(model);
+
+                if (!result)
+                {
+                    this.ModelState.AddModelError(nameof(model.StartDate), $"The date should be in the following format: {AppointmentTimeFormat}");
+                    return this.View(model);
+                }
 
                 return RedirectToAction(nameof(Index));
             }
             catch(Exception ex) 
             {
                 ModelState.AddModelError("", "An error occurred while creating the appointment.");
-                Console.WriteLine("Exception caught: " + ex.Message);
-                Console.WriteLine("StackTrace: " + ex.StackTrace);
                 return View(model);
             }
         }
 
-        public async Task<ActionResult> Edit(int id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var userId = user?.Id;
+            Guid userId = user!.Id;
 
-            var appointment = await _dbContext.Appointments
-                .Include(appointment => appointment.Patient)
-                .FirstOrDefaultAsync(a => a.Id == id && a.PractitionerId == userId);
+            EditAppointmentViewModel? model = await this._appointmentService
+                .GetEditAppointmentModelByIdAsync(id, userId);
 
-            if (appointment == null)
+            if (model == null)
             {
-                return NotFound();
+                return this.RedirectToAction(nameof(Index));
             }
-
-            var model = new EditAppointmentViewModel()
-            {
-                Id = appointment.Id
-            };
             
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Edit(int id, EditAppointmentViewModel model)
+        public async Task<IActionResult> Edit(EditAppointmentViewModel model)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                bool isUpdated = await this._appointmentService.EditAppointmentAsync(model);
+                if (!isUpdated)
+                {
+                    return this.View(model);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                ModelState.AddModelError("", "An error occurred while creating the appointment.");
+
+                return View(model);
             }
         }
 
