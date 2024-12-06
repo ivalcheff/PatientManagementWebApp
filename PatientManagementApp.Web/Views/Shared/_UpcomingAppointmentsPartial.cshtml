@@ -1,0 +1,47 @@
+﻿@using PatientManagementApp.Web.ViewModels.AppointmentViewModels
+@model IEnumerable<AppointmentInfoViewModel>
+
+<div class="appointments">
+    <h3>Upcoming Appointments for the Week</h3>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p>No upcoming appointments for the selected day.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var appointment in Model)
+            {
+                <tr>
+                    <td>@appointment.PatientFirstName @appointment.PatientLastName</td>
+                    <td>@appointment.Description</td>
+                    <td>@appointment.StartDate</td>
+                    <td>@appointment.EndDate</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="pagination">
+    @if (ViewBag.HasPreviousDay != null && ViewBag.HasPreviousDay)
+    {
+        <a asp-controller="Appointment" asp-action="GetAppointmentsForDay" asp-route-day="@(ViewBag.CurrentDayIndex - 1)" class="btn btn-primary">Previous Day</a>
+    }
+
+    @if (ViewBag.HasNextDay != null && ViewBag.HasNextDay)
+    {
+        <a asp-controller="Appointment" asp-action="GetAppointmentsForDay" asp-route-day="@(ViewBag.CurrentDayIndex + 1)" class="btn btn-primary">Next Day</a>
+    }
+</div>

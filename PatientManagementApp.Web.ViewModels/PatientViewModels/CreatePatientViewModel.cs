@@ -1,7 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using PatientManagementApp.Common;
 using static PatientManagementApp.Common.Enums;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.ModelValidationConstraints.Patient;

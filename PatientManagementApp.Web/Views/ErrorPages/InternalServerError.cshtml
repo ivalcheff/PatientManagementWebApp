@@ -1,0 +1,9 @@
+﻿@page
+@model PatientManagementApp.Web.Views.ErrorPages._500Model
+@{
+    ViewData["Title"] = "Server Error";
+    Response.StatusCode = 500;
+}
+<h1>500 - Internal Server Error</h1>
+<p>Oops! Something went wrong on our end.</p>
+<a asp-page="/Index">Return to Home Page</a>

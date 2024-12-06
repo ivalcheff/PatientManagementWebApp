@@ -8,6 +8,7 @@ namespace PatientManagementApp.Services.Data.Interfaces
     public interface IAppointmentService 
     {
         Task<IEnumerable<AppointmentInfoViewModel>> IndexAllOrderedByDateAsync(Guid userId);
+        Task<IEnumerable<AppointmentInfoViewModel>> GetUpcomingAppointmentsForDayAsync(Guid userId, DayOfWeek day);
         Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId);
 
         Task<Practitioner?> GetPractitionerByIdAsync(Guid practitionerId);

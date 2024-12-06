@@ -35,6 +35,7 @@ namespace PatientManagementApp.Services.Data
                 .Where(a => a.PractitionerId == userId)
                 .AsNoTracking()
                 .OrderBy(a => a.StartDate)
+                .Include(a => a.Patient)
                 .To<AppointmentInfoViewModel>()
                 .ToListAsync();
 
@@ -83,6 +84,8 @@ namespace PatientManagementApp.Services.Data
             Appointment editedAppointment = AutoMapperConfig.MapperInstance.Map<Appointment>(model);
             editedAppointment.StartDate = startTime;
             editedAppointment.EndDate = endTime;
+            editedAppointment.PatientId = model.PatientId;
+            editedAppointment.PractitionerId = model.PractitionerId;
 
             return await this._appointmentRepository.UpdateAsync(editedAppointment);
         }
@@ -117,6 +120,21 @@ namespace PatientManagementApp.Services.Data
         }
 
 
+        public async Task<IEnumerable<AppointmentInfoViewModel>> GetUpcomingAppointmentsForDayAsync(Guid userId, DayOfWeek day)
+        {
+            var startOfDay = DateTime.Today.AddDays((int)day - (int)DateTime.Today.DayOfWeek);
+            var endOfDay = startOfDay.AddDays(1);
+
+            var appointments = await this._appointmentRepository
+                .GetAllAttached()
+                .Where(a => a.PractitionerId == userId && a.StartDate >= startOfDay && a.StartDate < endOfDay)
+                .AsNoTracking()
+                .OrderBy(a => a.StartDate)
+                .To<AppointmentInfoViewModel>()
+                .ToListAsync();
+
+            return appointments;
+        }
 
 
         //GET PRACTITIONER

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 using PatientManagementApp.Data;
@@ -30,7 +29,6 @@ namespace PatientManagementApp.Web.Controllers
         {
            var user = await _userManager.GetUserAsync(User);
            var userId = user!.Id;
-            
 
            IEnumerable<AppointmentInfoViewModel> appointments
                = await this._appointmentService
@@ -47,7 +45,7 @@ namespace PatientManagementApp.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             var userId = user!.Id;
 
-            var appointment = await _appointmentService
+            AppointmentInfoViewModel appointment = await _appointmentService
                 .GetAppointmentDetailsByIdAsync(id, userId);
 
             if (appointment == null)
@@ -203,6 +201,32 @@ namespace PatientManagementApp.Web.Controllers
 
             return new JsonResult(events);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAppointmentsForDay(DayOfWeek day)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var userId = user.Id;
+            var appointments = await _appointmentService.GetUpcomingAppointmentsForDayAsync(userId, day);
+
+            ViewBag.CurrentDayIndex = (int)day;
+            ViewBag.HasPreviousDay = day > DayOfWeek.Monday;
+            ViewBag.HasNextDay = day < DayOfWeek.Sunday;
+
+            if (appointments == null)
+            {
+                appointments = new List<AppointmentInfoViewModel>();
+            }
+
+
+            return PartialView("_UpcomingAppointmentsPartial", appointments);
+        }
+
 
         //TODO:
         /*

@@ -46,7 +46,9 @@ namespace PatientManagementApp.Web.ViewModels.AppointmentViewModels
 
             configuration.CreateMap<EditAppointmentViewModel, Appointment>()
                 .ForMember(d => d.StartDate, x => x.Ignore())
-                .ForMember(d => d.EndDate, x => x.Ignore());
+                .ForMember(d => d.EndDate, x => x.Ignore())
+                .ForMember(d => d.PractitionerId, x => x.Ignore())
+                .ForMember(d => d.PatientId, x => x.Ignore()); ;
 
         }
     }

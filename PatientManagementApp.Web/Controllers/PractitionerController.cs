@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,6 @@ using PatientManagementApp.Data.Models;
 using PatientManagementApp.Data;
 using PatientManagementApp.Web.ViewModels.PractitionerViewModels;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
-using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 

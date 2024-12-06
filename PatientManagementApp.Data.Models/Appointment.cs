@@ -30,5 +30,8 @@ namespace PatientManagementApp.Data.Models
         [ForeignKey(nameof(PractitionerId))]
         public virtual Practitioner Practitioner { get; set; } = null!;
 
+        [Comment("for soft-delete purposes")]
+        public bool IsDeleted { get; set; }
+
     }
 }

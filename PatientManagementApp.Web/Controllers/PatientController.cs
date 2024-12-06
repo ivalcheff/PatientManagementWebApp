@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
-using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Web.ViewModels.PatientViewModels;
@@ -16,12 +14,10 @@ using static PatientManagementApp.Common.Enums;
 namespace PatientManagementApp.Web.Controllers
 {
     [Authorize]
-    public class PatientController(ApplicationDbContext dbContext
-                                    ,IPatientService patientService
-                                    ,UserManager<ApplicationUser> userManager) 
+    public class PatientController(IPatientService patientService
+                                ,UserManager<ApplicationUser> userManager) 
         : BaseController
     {
-        private readonly ApplicationDbContext _dbContext = dbContext;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IPatientService _patientService = patientService;
 

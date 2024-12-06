@@ -22,6 +22,9 @@ namespace PatientManagementApp.Services.Data
         private readonly IRepository<EmergencyContact, Guid> _emergencyContactRepository = emergencyContactRepository;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
+
+        //ToDo: implement soft delete 
+
         public async Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId)
         {
             return await _practitionerRepository
@@ -160,37 +163,5 @@ namespace PatientManagementApp.Services.Data
             return true;
         }
 
-        
-
-
-        /*
-        public List<SelectListItem> GetGenderOptions()
-        {
-            var gendersList = Enum.GetValues(typeof(Gender))
-                .Cast<Gender>()
-                .Select(g => new SelectListItem
-                {
-                    Value = ((int)g).ToString(),
-                    Text = g.ToString()
-                })
-                .ToList();
-
-            return gendersList;
-        }
-
-        public List<SelectListItem> GetStatusOptions()
-        {
-            var patientStatusList = Enum.GetValues(typeof(PatientStatus))
-                .Cast<PatientStatus>()
-                .Select(g => new SelectListItem
-                {
-                    Value = ((int)g).ToString(),
-                    Text = g.ToString()
-                })
-                .ToList();
-
-            return patientStatusList;
-        }
-        */
     }
 }

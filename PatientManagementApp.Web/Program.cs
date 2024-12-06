@@ -72,6 +72,23 @@ namespace PatientManagementApp.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseStatusCodePages(async context =>
+            {
+                var response = context.HttpContext.Response;
+
+                if (response.StatusCode == 404)
+                {
+                    context.HttpContext.Request.Path = "/Errors/NotFound";
+                    await context.Next(context.HttpContext);
+                }
+                else if (response.StatusCode == 500)
+                {
+                    context.HttpContext.Request.Path = "/Errors/InternalServerError";
+                    await context.Next(context.HttpContext);
+                }
+            });
+
+
             app.UseRouting();
 
             app.UseAuthentication();

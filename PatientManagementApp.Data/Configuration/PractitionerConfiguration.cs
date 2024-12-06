@@ -16,6 +16,11 @@ namespace PatientManagementApp.Data.Configuration
                 .HasForeignKey<Practitioner>(p => p.Id)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder
+                .Property(p => p.IsDeleted)
+                .IsRequired()
+                .HasDefaultValue(false);
+
         }
 
 

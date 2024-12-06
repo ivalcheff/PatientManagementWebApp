@@ -29,6 +29,9 @@ namespace PatientManagementApp.Data.Models
         [Comment("Whether the practitioner has online consultations with patients")]
         public bool IsAvailableOnline { get; set; }
 
+        [Comment("To implement soft-delete")]
+        public bool IsDeleted { get; set; }
+
         [Required]
         [Comment("A list of all the patients for this practitioner")]
         public ICollection<Patient> Patients { get; set; } = 
