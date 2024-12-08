@@ -18,6 +18,8 @@ namespace PatientManagementApp.Data.Models
 
         public virtual Practitioner Practitioner { get; set; } = null!;
 
+        public bool IsDeleted { get; set; }
+
         //TODO add a Patient User:
         //public Guid PatientId { get; set; }
         //public virtual Patient? Patient { get; set; }

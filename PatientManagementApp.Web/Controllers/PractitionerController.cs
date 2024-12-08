@@ -18,6 +18,34 @@ namespace PatientManagementApp.Web.Controllers
         private readonly IPractitionerService _practitionerService = practitionerService;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
+        //INDEX
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user!.Id;
+
+            // Check if the user has the Admin role
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            IEnumerable<PractitionerDetailsViewModel> practitioners;
+
+            if (isAdmin)
+            {
+                practitioners = await this._practitionerService.IndexAllPractitionersAsync();
+                ViewBag.Title = "All Patients";
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            return View(practitioners);
+        }
+
+        //DETAILS
+
         [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -41,6 +69,9 @@ namespace PatientManagementApp.Web.Controllers
 
             return View(practitionerDetails);
         }
+
+
+        //EDIT
 
         [HttpGet]
 
@@ -84,5 +115,43 @@ namespace PatientManagementApp.Web.Controllers
             return RedirectToAction(nameof(Details));
 
         }
+
+
+        //SOFT-DELETE
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            DeletePractitionerViewModel? model = await this._practitionerService
+                .GetPractitionerDeleteModelAsync(id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SoftDeleteConfirmed(DeletePractitionerViewModel model)
+        {
+           
+            bool isDeleted = await this._practitionerService.SoftDeletePractitionerAsync(model.Id);
+
+            if (!isDeleted)
+            {
+                TempData["ErrorMessage"] = "Unexpected error occured. Could not delete practitioner.";
+                return this.RedirectToAction(nameof(Delete), new { id = model.Id });
+            }
+
+            TempData["SuccessMessage"] = "Practitioner and related records have been successfully marked as inactive.";
+            return this.RedirectToAction(nameof(Index));
+
+        }
+
     }
 }

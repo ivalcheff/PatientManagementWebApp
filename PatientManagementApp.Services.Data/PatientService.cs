@@ -23,6 +23,9 @@ namespace PatientManagementApp.Services.Data
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
+        //TODO: implement transfer to another Practitioner
+
+
         public async Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId)
         {
             return await _practitionerRepository
@@ -38,6 +41,7 @@ namespace PatientManagementApp.Services.Data
         }
 
 
+        //INDEX
         public async Task<IEnumerable<PatientDetailsViewModel>> IndexAllPatientsAsync()
         {
             var patients = await this._patientRepository
@@ -67,6 +71,8 @@ namespace PatientManagementApp.Services.Data
             return patients;
         }
 
+
+        //DETAILS
         public async Task<PatientDetailsViewModel> GetPatientDetailsByIdAsync(Guid id)
         {
             PatientDetailsViewModel? patient = await this._patientRepository
@@ -82,6 +88,7 @@ namespace PatientManagementApp.Services.Data
         }
 
 
+        //EDIT
         public async Task<EditPatientViewModel?> GetEditPatientModelByIdAsync(Guid id)
         {
             EditPatientViewModel? model = await this._patientRepository
@@ -121,7 +128,7 @@ namespace PatientManagementApp.Services.Data
             return await this._patientRepository.UpdateAsync(editedPatient);
         }
 
-       
+       //ADD NEW PATIENT
 
         public async Task<bool> AddNewPatientAsync(CreatePatientViewModel model, Guid userId)
         {
@@ -160,7 +167,7 @@ namespace PatientManagementApp.Services.Data
             return true;
         }
 
-
+        //SOFT-DELETE
         public async Task<DeletePatientViewModel?> GetPatientDeleteModelAsync(Guid id)
         {
             DeletePatientViewModel? patientToDelete = await this._patientRepository
@@ -188,6 +195,8 @@ namespace PatientManagementApp.Services.Data
 
             patient.IsActive = false;
 
+            //clear all linked entities from their associated data:
+
             if (patient.EmergencyContact != null)
             {
                 patient.EmergencyContact.IsDeleted = true;
@@ -201,6 +210,26 @@ namespace PatientManagementApp.Services.Data
                 }
             }
 
+            if (patient.Notes != null && patient.Notes.Any())
+            {
+                foreach (var note in patient.Notes)
+                {
+                    note.IsDeleted = true;
+                }
+            }
+
+            if (patient.Files != null && patient.Files.Any())
+            {
+                foreach (var file in patient.Files)
+                {
+                    file.IsDeleted = true;
+                }
+            }
+
+            if (patient.PatientsMedications != null && patient.PatientsMedications.Any())
+            {
+                patient.PatientsMedications.Clear();
+            }
 
             return await this._patientRepository.UpdateAsync(patient);
         }

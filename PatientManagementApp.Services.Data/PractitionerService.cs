@@ -6,9 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Data.Repository.Interfaces;
 using PatientManagementApp.Services.Data.Interfaces;
+using PatientManagementApp.Services.Mapping;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 using PatientManagementApp.Web.ViewModels.PractitionerViewModels;
+using static PatientManagementApp.Common.ModelValidationConstraints;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
+using Specialty = PatientManagementApp.Data.Models.Specialty;
 
 
 namespace PatientManagementApp.Services.Data
@@ -25,10 +28,25 @@ namespace PatientManagementApp.Services.Data
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
-        //TODO: Add index all practitioners for the admin user
-        //TODO: Add soft-delete
 
 
+        //INDEX
+        public async Task<IEnumerable<PractitionerDetailsViewModel>>IndexAllPractitionersAsync()
+        {
+            var practitioners = await this._practitionerRepository
+                .GetAllAttached()
+                .Where(p => !p.IsDeleted)
+                .AsNoTracking()
+                .OrderBy(p => p.FirstName)
+                .ThenBy(p => p.LastName)
+                .To<PractitionerDetailsViewModel>()
+                .ToListAsync();
+
+            return practitioners;
+        }
+
+
+        //DETAILS
         public async Task<PractitionerDetailsViewModel> GetPractitionerDetailsByIdAsync(Guid id)
         {
             Practitioner? practitioner = await this._practitionerRepository
@@ -72,6 +90,8 @@ namespace PatientManagementApp.Services.Data
             return model;
         }
 
+
+        //EDIT
         public async Task<PractitionerEditViewModel?> GetPractitionerEditModelByIdAsync(Guid id)
         {
             var specialties = await this._specialtiesRepository
@@ -142,6 +162,58 @@ namespace PatientManagementApp.Services.Data
                     SpecialtyId = specialtyId
                 });
             }
+
+            return await this._practitionerRepository.UpdateAsync(practitioner);
+        }
+
+        //SOFT-DELETE
+        public async Task<DeletePractitionerViewModel?> GetPractitionerDeleteModelAsync(Guid id)
+        {
+            DeletePractitionerViewModel? practitionerToDelete = await this._practitionerRepository
+                .GetAllAttached()
+                .Include(p => p.Appointments)
+                .Include(p => p.PractitionersSpecialties)
+                .Include(p => p.Patients)
+                .Include(p => p.User)
+                .To<DeletePractitionerViewModel>()
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return practitionerToDelete;
+        }
+
+        public async Task<bool> SoftDeletePractitionerAsync(Guid id)
+        {
+            Practitioner? practitioner = await this._practitionerRepository
+                .GetAllAttached()
+                .Include(p => p.Appointments)
+                .Include(p => p.PractitionersSpecialties)
+                .Include(p => p.Patients)
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (practitioner == null)
+            {
+                return false;
+            }
+
+            practitioner.IsDeleted = true;
+            practitioner.User.IsDeleted = true;
+
+            //clear all linked entities from their associated data:
+            if (practitioner.Appointments != null && practitioner.Appointments.Any())
+            {
+                foreach (var appointment in practitioner.Appointments)
+                {
+                    appointment.IsDeleted = true;
+                }
+            }
+
+            if (practitioner.PractitionersSpecialties != null && practitioner.PractitionersSpecialties.Any())
+            {
+                practitioner.PractitionersSpecialties.Clear();
+            }
+
+            
 
             return await this._practitionerRepository.UpdateAsync(practitioner);
         }

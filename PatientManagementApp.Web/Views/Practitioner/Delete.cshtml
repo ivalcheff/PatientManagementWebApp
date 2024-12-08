@@ -1,0 +1,22 @@
+﻿@using PatientManagementApp.Web.ViewModels.PractitionerViewModels
+@model DeletePractitionerViewModel
+
+
+<h2>Delete Practitioner</h2>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<p>Are you sure you want to delete the following practitioner?</p>
+<p><strong>Patient:</strong> @Model.FirstName @Model.LastName, @Model.Email</p>
+
+
+<form asp-action="SoftDeleteConfirmed" method="post">
+    @Html. AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <br/>
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-primary">Back to All Practitioners</a>
+</form>

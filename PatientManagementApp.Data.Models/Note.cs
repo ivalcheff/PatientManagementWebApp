@@ -23,5 +23,7 @@ namespace PatientManagementApp.Data.Models
         [MaxLength(NoteTextMaxLength)]
         [Comment("The content of the note")]
         public string NoteText { get; set; } = null!;
+
+        public bool IsDeleted { get; set; }
     }
 }

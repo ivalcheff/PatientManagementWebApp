@@ -25,5 +25,7 @@ namespace PatientManagementApp.Data.Models
         public Guid PatientId { get; set; }
         [ForeignKey(nameof(PatientId))]
         public virtual Patient Patient { get; set; } = null!;
+
+        public bool IsDeleted { get; set; }
     }
 }
