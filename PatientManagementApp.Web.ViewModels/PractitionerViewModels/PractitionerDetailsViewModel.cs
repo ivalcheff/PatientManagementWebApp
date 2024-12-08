@@ -1,12 +1,13 @@
 ﻿
 
 using PatientManagementApp.Data.Models;
+using PatientManagementApp.Services.Mapping;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 
 
 namespace PatientManagementApp.Web.ViewModels.PractitionerViewModels
 {
-    public class PractitionerDetailsViewModel
+    public class PractitionerDetailsViewModel : IMapFrom<Practitioner>
     {
         public Guid Id { get; set; }
         

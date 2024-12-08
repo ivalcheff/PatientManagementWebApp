@@ -1,11 +1,9 @@
 ﻿using System.Reflection;
-using System.Reflection.Emit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PatientManagementApp.Data.Models;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace PatientManagementApp.Data
 {

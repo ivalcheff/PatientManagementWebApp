@@ -22,5 +22,9 @@ namespace PatientManagementApp.Services.Data.Interfaces
         Task<bool> EditAppointmentAsync(EditAppointmentViewModel model);
         Task<Patient?> GetPatientByNameAsync(string firstName, string lastName);
 
+        Task<AppointmentInfoViewModel?> GetAppointmentModelForDeleteAsync(int id);
+        Task<bool> SoftDeleteAppointmentAsync(int id);
+
+
     }
 }

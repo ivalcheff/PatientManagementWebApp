@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
 
-using PatientManagementApp.Services.Data;
 using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Services.Mapping;
 using PatientManagementApp.Web.Infrastructure.Extensions;
@@ -47,8 +46,6 @@ namespace PatientManagementApp.Web
 
             builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
             builder.Services.RegisterUserDefinedServices(typeof(IAppointmentService).Assembly);
-            //builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-            //builder.Services.AddScoped<IPatientService, PatientService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
@@ -65,32 +62,16 @@ namespace PatientManagementApp.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseStatusCodePages(async context =>
-            {
-                var response = context.HttpContext.Response;
-
-                if (response.StatusCode == 404)
-                {
-                    context.HttpContext.Request.Path = "/Errors/NotFound";
-                    await context.Next(context.HttpContext);
-                }
-                else if (response.StatusCode == 500)
-                {
-                    context.HttpContext.Request.Path = "/Errors/InternalServerError";
-                    await context.Next(context.HttpContext);
-                }
-            });
-
+            app.UseStatusCodePagesWithReExecute("/Errors/{0}");
 
             app.UseRouting();
-
+           
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -108,7 +89,6 @@ namespace PatientManagementApp.Web
                 await context.Database.EnsureCreatedAsync();
 
                 //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-
 
                 await context.SeedData(scope.ServiceProvider);
             }

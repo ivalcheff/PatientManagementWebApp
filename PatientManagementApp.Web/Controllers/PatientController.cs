@@ -117,6 +117,11 @@ namespace PatientManagementApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                return this.RedirectToAction(nameof(Index));
+            }
+
             EditPatientViewModel? model = await this._patientService
                 .GetEditPatientModelByIdAsync(id);
 

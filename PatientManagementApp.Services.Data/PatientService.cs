@@ -113,7 +113,6 @@ namespace PatientManagementApp.Services.Data
                 return false;
             }
 
-            Console.WriteLine("Dates have been validated");
 
             Patient editedPatient = AutoMapperConfig.MapperInstance.Map<Patient>(model);
             editedPatient.BirthDate = dateOfBirth;

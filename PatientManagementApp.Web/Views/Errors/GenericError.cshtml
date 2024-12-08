@@ -1,0 +1,8 @@
+﻿@{
+    ViewBag.Title = ViewData["Title"] ?? "Error";
+    var message = ViewData["Message"] ?? "An unexpected error occurred.";
+}
+
+<h1>@ViewBag.Title</h1>
+<p>@message</p>
+<a asp-page="/Index">Return to Home Page</a>

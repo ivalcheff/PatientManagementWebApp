@@ -1,0 +1,23 @@
+﻿@using PatientManagementApp.Web.ViewModels.AppointmentViewModels
+@model AppointmentInfoViewModel
+
+
+<h2>Delete Appointment</h2>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<p>Are you sure you want to delete the appointment:</p>
+<p><strong>Patient:</strong> @Model.PatientFirstName @Model.PatientLastName</p>
+<p><strong>Start:</strong> @Model.StartDate</p>
+<p><strong>End:</strong> @Model.EndDate</p>
+<p><strong>Description:</strong> @Model.Description </p>
+
+<form asp-action="SoftDeleteConfirmed" method="post">
+    @Html. AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-primary">Back to All Appointments</a>
+</form>

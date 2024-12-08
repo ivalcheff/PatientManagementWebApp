@@ -33,6 +33,7 @@ namespace PatientManagementApp.Services.Data
             var appointments = await this._appointmentRepository
                 .GetAllAttached()
                 .Where(a => a.PractitionerId == userId)
+                .Where(a => a.IsDeleted == false)
                 .AsNoTracking()
                 .OrderBy(a => a.StartDate)
                 .Include(a => a.Patient)
@@ -48,6 +49,7 @@ namespace PatientManagementApp.Services.Data
             var appointment = await this._appointmentRepository
                 .GetAllAttached()
                 .Where(a => a.Id == id && a.PractitionerId == userId)
+                .Where(a => a.IsDeleted == false)
                 .Include(a => a.Patient)
                 .AsNoTracking()
                 .To<AppointmentInfoViewModel>()
@@ -63,6 +65,7 @@ namespace PatientManagementApp.Services.Data
         {
             EditAppointmentViewModel? model = await this._appointmentRepository
                 .GetAllAttached()
+                .Where(a => a.IsDeleted == false)
                 .Include(a => a.Patient)
                 .To<EditAppointmentViewModel>()
                 .FirstOrDefaultAsync(a => a.Id == id && a.PractitionerId == userId);
@@ -122,12 +125,17 @@ namespace PatientManagementApp.Services.Data
 
         public async Task<IEnumerable<AppointmentInfoViewModel>> GetUpcomingAppointmentsForDayAsync(Guid userId, DayOfWeek day)
         {
-            var startOfDay = DateTime.Today.AddDays((int)day - (int)DateTime.Today.DayOfWeek);
-            var endOfDay = startOfDay.AddDays(1);
+            var today = DateTime.UtcNow.Date; 
+            var targetDay = today.AddDays((int)day - (int)today.DayOfWeek);
+            var startOfDay = targetDay;
+            var endOfDay = targetDay.AddDays(1);
 
             var appointments = await this._appointmentRepository
                 .GetAllAttached()
-                .Where(a => a.PractitionerId == userId && a.StartDate >= startOfDay && a.StartDate < endOfDay)
+                .Where(a => a.PractitionerId == userId
+                            && a.IsDeleted == false
+                            && a.StartDate >= startOfDay
+                            && a.StartDate < endOfDay)
                 .AsNoTracking()
                 .OrderBy(a => a.StartDate)
                 .To<AppointmentInfoViewModel>()
@@ -159,6 +167,32 @@ namespace PatientManagementApp.Services.Data
             return await _patientRepository
                 .GetAllAttached()
                 .FirstOrDefaultAsync(p => p.FirstName == firstName && p.LastName == lastName);
+        }
+
+        public async Task<AppointmentInfoViewModel?> GetAppointmentModelForDeleteAsync(int id)
+        {
+            AppointmentInfoViewModel? appointmentToDelete = await this._appointmentRepository
+                .GetAllAttached()
+                .To<AppointmentInfoViewModel>()
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            return appointmentToDelete;
+        }
+
+        public async Task<bool> SoftDeleteAppointmentAsync(int id)
+        {
+            Appointment? appointment = await this._appointmentRepository
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (appointment == null)
+            {
+                return false;
+            }
+
+            appointment.IsDeleted = true;
+
+            return await this._appointmentRepository.UpdateAsync(appointment);
+            
         }
     }
 }

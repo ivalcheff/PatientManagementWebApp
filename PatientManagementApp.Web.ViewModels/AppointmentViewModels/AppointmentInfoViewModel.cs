@@ -1,9 +1,12 @@
-﻿using PatientManagementApp.Data.Models;
+﻿using AutoMapper;
+using PatientManagementApp.Data.Models;
 using PatientManagementApp.Services.Mapping;
+using static PatientManagementApp.Common.ModelValidationConstraints.Global;
+
 
 namespace PatientManagementApp.Web.ViewModels.AppointmentViewModels
 {
-    public class AppointmentInfoViewModel:IMapFrom<Appointment>
+    public class AppointmentInfoViewModel:IMapFrom<Appointment>, IHaveCustomMappings
     {
         public int Id { get; set; }
 
@@ -16,5 +19,13 @@ namespace PatientManagementApp.Web.ViewModels.AppointmentViewModels
         public string PatientLastName { get; set; } = null!;
 
 
+        public void CreateMappings(IProfileExpression configuration)
+        {
+            configuration.CreateMap<Appointment, AppointmentInfoViewModel>()
+                .ForMember(d => d.StartDate,
+                    x => x.MapFrom(s => s.StartDate.ToString(AppointmentTimeFormat)))
+                .ForMember(d => d.EndDate,
+                    x => x.MapFrom(s => s.EndDate.ToString(AppointmentTimeFormat)));
+        }
     }
 }

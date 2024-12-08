@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using PatientManagementApp.Data;
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Services.Data.Interfaces;
@@ -23,6 +22,7 @@ namespace PatientManagementApp.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly IAppointmentService _appointmentService = appointmentService;
 
+        //INDEX
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -37,11 +37,12 @@ namespace PatientManagementApp.Web.Controllers
            return View(appointments);
         }
 
-
+        //DETAILS
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
+            
             var user = await _userManager.GetUserAsync(User);
             var userId = user!.Id;
 
@@ -57,7 +58,7 @@ namespace PatientManagementApp.Web.Controllers
         }
 
 
-
+        //CREATE
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -131,6 +132,8 @@ namespace PatientManagementApp.Web.Controllers
             }
         }
 
+        //EDIT
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -174,7 +177,7 @@ namespace PatientManagementApp.Web.Controllers
             }
         }
 
-
+        //CALENDAR
        [HttpGet]
         public async Task<IActionResult> GetAppointments()
         {
@@ -202,6 +205,8 @@ namespace PatientManagementApp.Web.Controllers
             return new JsonResult(events);
         }
 
+
+        //UPCOMING APPOINTMENTS PARTIAL VIEW
         [HttpGet]
         public async Task<IActionResult> GetAppointmentsForDay(DayOfWeek day)
         {
@@ -212,47 +217,54 @@ namespace PatientManagementApp.Web.Controllers
             }
 
             var userId = user.Id;
+
+            // Ensure the day is within the valid range (0 - 6).
+            if (!Enum.IsDefined(typeof(DayOfWeek), day))
+            {
+                return BadRequest("Invalid day of the week.");
+            }
+
             var appointments = await _appointmentService.GetUpcomingAppointmentsForDayAsync(userId, day);
 
             ViewBag.CurrentDayIndex = (int)day;
             ViewBag.HasPreviousDay = day > DayOfWeek.Monday;
             ViewBag.HasNextDay = day < DayOfWeek.Sunday;
 
-            if (appointments == null)
+            return PartialView("_UpcomingAppointmentsPartial", appointments ?? new List<AppointmentInfoViewModel>());
+        }
+
+
+        //SOFT DELETE
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            AppointmentInfoViewModel? model = await this._appointmentService
+                .GetAppointmentModelForDeleteAsync(id);
+
+            if (model == null)
             {
-                appointments = new List<AppointmentInfoViewModel>();
+                return NotFound();
             }
 
-
-            return PartialView("_UpcomingAppointmentsPartial", appointments);
+            return View(model);
         }
 
-
-        //TODO:
-        /*
-
-        // GET: AppointmentController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AppointmentController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> SoftDeleteConfirmed(AppointmentInfoViewModel model)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            bool isDeleted = await this._appointmentService
+                .SoftDeleteAppointmentAsync(model.Id);
 
-        */
+            if (!isDeleted)
+            {
+                TempData["ErrorMessage"] = "Unexpected error occured. Could not delete appointment.";
+                return this.RedirectToAction(nameof(Delete), new { id = model.Id });
+            }
+
+            return this.RedirectToAction(nameof(Index));
+
+        }
 
     }
 }

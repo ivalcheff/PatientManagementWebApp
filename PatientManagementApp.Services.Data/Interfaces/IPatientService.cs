@@ -16,8 +16,5 @@ namespace PatientManagementApp.Services.Data.Interfaces
         Task<EditPatientViewModel?> GetEditPatientModelByIdAsync(Guid id);
         Task<bool> EditPatientAsync(EditPatientViewModel model);
 
-
-        //List<SelectListItem> GetGenderOptions();
-        //List<SelectListItem> GetStatusOptions();
     }
 }
