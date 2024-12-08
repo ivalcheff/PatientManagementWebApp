@@ -16,5 +16,7 @@ namespace PatientManagementApp.Services.Data.Interfaces
         Task<EditPatientViewModel?> GetEditPatientModelByIdAsync(Guid id);
         Task<bool> EditPatientAsync(EditPatientViewModel model);
 
+        Task<DeletePatientViewModel?> GetPatientDeleteModelAsync(Guid id);
+        Task<bool> SoftDeletePatientAsync(Guid id);
     }
 }

@@ -26,6 +26,6 @@ namespace PatientManagementApp.Data.Models
         [Comment("The emergency contact's relationship to the patient")]
         public string? Relationship { get; set; }
 
-
+        public bool IsDeleted { get; set; }
     }
 }

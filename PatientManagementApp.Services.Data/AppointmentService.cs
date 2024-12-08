@@ -169,6 +169,8 @@ namespace PatientManagementApp.Services.Data
                 .FirstOrDefaultAsync(p => p.FirstName == firstName && p.LastName == lastName);
         }
 
+
+        //SOFT DELETE
         public async Task<AppointmentInfoViewModel?> GetAppointmentModelForDeleteAsync(int id)
         {
             AppointmentInfoViewModel? appointmentToDelete = await this._appointmentRepository

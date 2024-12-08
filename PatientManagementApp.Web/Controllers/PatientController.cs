@@ -9,6 +9,7 @@ using PatientManagementApp.Web.ViewModels.PatientViewModels;
 
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
 using static PatientManagementApp.Common.Enums;
+using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
 
 
 namespace PatientManagementApp.Web.Controllers
@@ -158,6 +159,39 @@ namespace PatientManagementApp.Web.Controllers
             }
 
             return RedirectToAction(nameof(Details), new { id = model.Id });
+        }
+
+
+        //SOFT DELETE
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            DeletePatientViewModel? model = await this._patientService
+                .GetPatientDeleteModelAsync(id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SoftDeleteConfirmed(DeletePatientViewModel model)
+        {
+            bool isDeleted = await this._patientService
+                .SoftDeletePatientAsync(model.Id);
+
+            if (!isDeleted)
+            {
+                TempData["ErrorMessage"] = "Unexpected error occured. Could not delete patient.";
+                return this.RedirectToAction(nameof(Delete), new { id = model.Id });
+            }
+
+            TempData["SuccessMessage"] = "Patient and related records have been successfully marked as inactive.";
+            return this.RedirectToAction(nameof(Index));
         }
 
 

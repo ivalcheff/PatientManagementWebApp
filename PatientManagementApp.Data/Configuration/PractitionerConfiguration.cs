@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PatientManagementApp.Common;
 using PatientManagementApp.Data.Models;
 
 namespace PatientManagementApp.Data.Configuration
@@ -21,25 +20,6 @@ namespace PatientManagementApp.Data.Configuration
                 .IsRequired()
                 .HasDefaultValue(false);
 
-        }
-
-
-        private List<Practitioner> SeedPractitioners()
-        {
-            List<Practitioner> practitioners = new List<Practitioner>()
-            {
-                new Practitioner()
-                {
-                    FirstName = "Петър",
-                    LastName = "Петров",
-                    
-
-
-                }
-
-            };
-
-            return practitioners;
         }
     }
 }

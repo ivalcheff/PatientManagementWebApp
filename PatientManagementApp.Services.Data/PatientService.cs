@@ -23,8 +23,6 @@ namespace PatientManagementApp.Services.Data
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
-        //ToDo: implement soft delete 
-
         public async Task<Practitioner?> GetPractitionerByUserIdAsync(Guid userId)
         {
             return await _practitionerRepository
@@ -113,7 +111,6 @@ namespace PatientManagementApp.Services.Data
                 return false;
             }
 
-
             Patient editedPatient = AutoMapperConfig.MapperInstance.Map<Patient>(model);
             editedPatient.BirthDate = dateOfBirth;
             editedPatient.TreatmentStartDate = treatmentStartDate;
@@ -122,8 +119,9 @@ namespace PatientManagementApp.Services.Data
             editedPatient.EmergencyContactId = model.EmergencyContactId;
 
             return await this._patientRepository.UpdateAsync(editedPatient);
-
         }
+
+       
 
         public async Task<bool> AddNewPatientAsync(CreatePatientViewModel model, Guid userId)
         {
@@ -160,6 +158,51 @@ namespace PatientManagementApp.Services.Data
 
             await this._patientRepository.AddAsync(patient);
             return true;
+        }
+
+
+        public async Task<DeletePatientViewModel?> GetPatientDeleteModelAsync(Guid id)
+        {
+            DeletePatientViewModel? patientToDelete = await this._patientRepository
+                .GetAllAttached()
+                .Include(p=>p.EmergencyContact)
+                .Include(p=> p.Appointments)
+                .To<DeletePatientViewModel>()
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return patientToDelete;
+        }
+
+        public async Task<bool> SoftDeletePatientAsync(Guid id)
+        {
+            Patient? patient = await this._patientRepository
+                    .GetAllAttached()
+                    .Include(p=>p.EmergencyContact)
+                    .Include(p=> p.Appointments)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (patient == null)
+            {
+                return false;
+            }
+
+            patient.IsActive = false;
+
+            if (patient.EmergencyContact != null)
+            {
+                patient.EmergencyContact.IsDeleted = true;
+            }
+
+            if (patient.Appointments != null && patient.Appointments.Any())
+            {
+                foreach (var appointment in patient.Appointments)
+                {
+                    appointment.IsDeleted = true;
+                }
+            }
+
+
+            return await this._patientRepository.UpdateAsync(patient);
         }
 
     }
