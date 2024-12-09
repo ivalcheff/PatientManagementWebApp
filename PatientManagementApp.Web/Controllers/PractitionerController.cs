@@ -50,11 +50,25 @@ namespace PatientManagementApp.Web.Controllers
         public async Task<IActionResult> Details(Guid? id)
         {
             var user = await _userManager.GetUserAsync(User);
-            id ??= user?.Id;
 
-            if (id == null)
+            if (User.IsInRole("Admin"))
             {
-                return Unauthorized();
+                // Admin can view any practitioner's details by passing the practitioner's ID
+                if (id == null)
+                {
+                    TempData["ErrorMessage"] = "Practitioner ID must be provided for admin access.";
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                // Non-admin users can only view their own details
+                id ??= user?.Id;
+
+                if (id == null || id != user?.Id)
+                {
+                    return Unauthorized();
+                }
             }
 
             PractitionerDetailsViewModel practitionerDetails;
@@ -69,6 +83,7 @@ namespace PatientManagementApp.Web.Controllers
 
             return View(practitionerDetails);
         }
+
 
 
         //EDIT

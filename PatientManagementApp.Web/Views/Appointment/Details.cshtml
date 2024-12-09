@@ -1,21 +1,34 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Appointment Details";
 }
 
 @using PatientManagementApp.Web.ViewModels.AppointmentViewModels
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model AppointmentInfoViewModel
+@model AppointmentInfoViewModel;
 
-<h2 class="text-center">@ViewBag.Title</h2>
+<div class="container bg-muted-blue p-4">
+    <h2 class="text-center mt-4 mb-4 text-dark">@ViewBag.Title</h2>
 
-<p><strong>Patient:</strong> @Model.PatientFirstName @Model.PatientLastName</p>
-<p><strong>Start:</strong> @Model.StartDate</p>
-<p><strong>End:</strong> @Model.EndDate</p>
-<p><strong>Description:</strong> @Model.Description </p>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark-blue text-white">
+            <h3 class="card-title text-center">Appointment with @Model.PatientFirstName @Model.PatientLastName</h3>
+        </div>
+        <div class="card-body">
+            <h5 class="card-subtitle mb-3 text-muted">Appointment Details</h5>
+            <p><strong>Start:</strong> @Model.StartDate</p>
+            <p><strong>End:</strong> @Model.EndDate</p>
+            <p><strong>Description:</strong> @Model.Description</p>
+        </div>
+    </div>
 
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit</a>
-<a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
-
-<a asp-action="Index" class="btn btn-primary">Back to All Appointments</a>
-
+    <div class="d-flex justify-content-between">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to All Appointments
+        </a>
+    </div>
+</div>

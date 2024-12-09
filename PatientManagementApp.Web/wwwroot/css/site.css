@@ -17,6 +17,110 @@ html {
   min-height: 100%;
 }
 
+/* Make the body a flex container with column layout */
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+}
+
+/* Footer styling */
+footer {
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    text-align: center;
+    border-top: 1px solid #dee2e6;
+}
+
+
+/* General Background Styles */
+.bg-muted-blue {
+    background-color: #f7f9fc; /* Subtle light blue/grey */
+}
+
+.bg-dark-blue {
+    background-color: #35495e; /* Muted dark blue */
+}
+
+.bg-muted-dark-blue {
+    background-color: #3c5368; /* Softer muted blue */
+}
+
+/* Button Styles */
+.btn-outline-primary {
+    border-color: #35495e;
+    color: #35495e;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #35495e;
+        color: white;
+    }
+
+.btn-outline-info {
+    border-color: #3c5368;
+    color: #3c5368;
+}
+
+    .btn-outline-info:hover {
+        background-color: #3c5368;
+        color: white;
+    }
+
+.btn-outline-success {
+    border-color: #3c5368;
+    color: #3c5368;
+}
+
+    .btn-outline-success:hover {
+        background-color: #3c5368;
+        color: white;
+    }
+
+.btn-outline-danger {
+    border-color: #3c5368;
+    color: #3c5368;
+}
+
+    .btn-outline-danger:hover {
+        background-color: #3c5368;
+        color: white;
+    }
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: bold;
+    padding: 1rem;
+    border-bottom: none;
+}
+
+/* Table Styles */
+.table thead {
+    background-color: #35495e; /* Muted dark blue for headers */
+    color: white;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e2e8f0; /* Light hover effect */
+}
+
+/* General Utility Classes */
+.text-muted {
+    color: #6c757d !important;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
 }

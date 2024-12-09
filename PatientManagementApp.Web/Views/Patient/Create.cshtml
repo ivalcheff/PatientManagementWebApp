@@ -1,5 +1,4 @@
-﻿
-@using PatientManagementApp.Web.ViewModels.PatientViewModels
+﻿@using PatientManagementApp.Web.ViewModels.PatientViewModels
 @using static PatientManagementApp.Common.ModelValidationConstraints.Global
 @model CreatePatientViewModel
 
@@ -7,100 +6,113 @@
     ViewBag.Title = "Add New Patient";
 }
 
-<h2 class="text-center">@ViewBag.Title</h2>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
-<form asp-action="Create" method="post">
-    <div>
-        <label asp-for="FirstName">First Name</label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="LastName">Last Name</label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="Gender">Gender</label>
-        <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-control"></select>
-        <span asp-validation-for="Gender" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="PhoneNumber">Phone Number</label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="Email">Email</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="DateOfBirth">Date Of Birth</label>
-        <input asp-for="DateOfBirth"  class="form-control" />
-        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="Age">Age</label>
-        <input asp-for="Age" class="form-control" />
-        <span asp-validation-for="Age" class="text-danger"></span>
-    </div>
-    <br />
-    <p><strong>Current Treatment Information</strong> </p>
-    <div>
-        <label asp-for="TreatmentStartDate">Treatment Start Date</label>
-        <input asp-for="TreatmentStartDate" class="form-control" value="@DateTime.UtcNow.ToString(DateFormatString)" />
-        <span asp-validation-for="TreatmentStartDate" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="TreatmentEndDate">Treatment End Date</label>
-        <input asp-for="TreatmentEndDate" class="form-control" />
-        <span asp-validation-for="TreatmentEndDate" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="ImportantInfo">Important Information About Patient</label>
-        <textarea asp-for="ImportantInfo" class="form-control"></textarea>
-        <span asp-validation-for="ImportantInfo" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="Diagnosis">Diagnosis</label>
-        <input asp-for="Diagnosis" class="form-control" />
-        <span asp-validation-for="Diagnosis" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="ReasonForVisit">Initial Reason for Visit</label>
-        <input asp-for="ReasonForVisit" class="form-control" />
-        <span asp-validation-for="ReasonForVisit" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="ReferredBy">Referred by</label>
-        <input asp-for="ReferredBy" class="form-control" />
-        <span asp-validation-for="ReferredBy" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="Status">Status</label>
-        <select asp-for="Status" asp-items="Model.PatientStatusOptions" class="form-control"></select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-    <br/>
-    <p><strong>Emergency contact information</strong> </p>
-    <div>
-        <label asp-for="EmergencyContactName">Emergency Contact Name</label>
-        <input asp-for="EmergencyContactName" class="form-control" />
-        <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="EmergencyContactPhone">Phone Number</label>
-        <input asp-for="EmergencyContactPhone" class="form-control" />
-        <span asp-validation-for="EmergencyContactPhone" class="text-danger"></span>
-    </div>
-    <div>
-        <label asp-for="EmergencyContactRelationship">Relationship</label>
-        <input asp-for="EmergencyContactRelationship" class="form-control" />
-        <span asp-validation-for="EmergencyContactRelationship" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary mt-2">Add New Patient</button>
-</form>
-<br/>
-<a asp-action="Index">Back to My Patients List</a>
+    <form asp-action="Create" method="post" class="card shadow-sm p-4">
+        <h4 class="text-primary">Personal Details</h4>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="FirstName" class="form-label">First Name</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="LastName" class="form-label">Last Name</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3 mt-2">
+            <div class="col-md-6">
+                <label asp-for="Gender" class="form-label">Gender</label>
+                <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-select"></select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                <input asp-for="DateOfBirth" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3 mt-2">
+            <div class="col-md-6">
+                <label asp-for="Age" class="form-label">Age</label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mt-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
 
+        <h4 class="text-primary mt-4">Treatment Information</h4>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="TreatmentStartDate" class="form-label">Treatment Start Date</label>
+                <input asp-for="TreatmentStartDate" class="form-control" />
+                <span asp-validation-for="TreatmentStartDate" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="TreatmentEndDate" class="form-label">Treatment End Date</label>
+                <input asp-for="TreatmentEndDate" class="form-control" />
+                <span asp-validation-for="TreatmentEndDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mt-3">
+            <label asp-for="ImportantInfo" class="form-label">Important Information About Patient</label>
+            <textarea asp-for="ImportantInfo" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="ImportantInfo" class="text-danger"></span>
+        </div>
+        <div class="mt-3">
+            <label asp-for="Diagnosis" class="form-label">Diagnosis</label>
+            <textarea asp-for="Diagnosis" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Diagnosis" class="text-danger"></span>
+        </div>
+        <div class="mt-3">
+            <label asp-for="ReasonForVisit" class="form-label">Reason for Visit</label>
+            <textarea asp-for="ReasonForVisit" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="ReasonForVisit" class="text-danger"></span>
+        </div>
+        <div class="mt-3">
+            <label asp-for="Status" class="form-label">Status</label>
+            <select asp-for="Status" asp-items="Model.PatientStatusOptions" class="form-select"></select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <h4 class="text-primary mt-4">Emergency Contact Information</h4>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="EmergencyContactName" class="form-label">Name</label>
+                <input asp-for="EmergencyContactName" class="form-control" />
+                <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="EmergencyContactPhone" class="form-label">Phone Number</label>
+                <input asp-for="EmergencyContactPhone" class="form-control" />
+                <span asp-validation-for="EmergencyContactPhone" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mt-3">
+            <label asp-for="EmergencyContactRelationship" class="form-label">Relationship</label>
+            <input asp-for="EmergencyContactRelationship" class="form-control" />
+            <span asp-validation-for="EmergencyContactRelationship" class="text-danger"></span>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-person-plus"></i> Add New Patient
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to My Patients List
+            </a>
+        </div>
+    </form>
+</div>

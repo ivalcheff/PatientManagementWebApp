@@ -8,6 +8,7 @@ using PatientManagementApp.Data.Repository.Interfaces;
 using PatientManagementApp.Services.Data.Interfaces;
 using PatientManagementApp.Services.Mapping;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
+using PatientManagementApp.Web.ViewModels.PatientViewModels;
 using PatientManagementApp.Web.ViewModels.PractitionerViewModels;
 using static PatientManagementApp.Common.ModelValidationConstraints;
 using static PatientManagementApp.Common.ModelValidationConstraints.Global;
@@ -58,6 +59,8 @@ namespace PatientManagementApp.Services.Data
                 .ThenInclude(appointment => appointment.Patient)
                 .Include(p => p.User)
                 .Include(p => p.Patients)
+                .ThenInclude(pt => pt.EmergencyContact)
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (practitioner == null)
@@ -72,10 +75,11 @@ namespace PatientManagementApp.Services.Data
                 LastName = practitioner.LastName,
                 Phone = practitioner.Phone,
                 Email = practitioner.User?.Email ?? string.Empty,
-                Patients = practitioner.Patients,
                 Specialties = practitioner.PractitionersSpecialties
                     .Select(ps => ps.Specialty.Name).ToList(),
+                
                 Appointments = practitioner.Appointments
+                    .Where(a => !a.IsDeleted)
                     .Select(a => new AppointmentInfoViewModel
                     {
                         Id = a.Id,
@@ -84,7 +88,20 @@ namespace PatientManagementApp.Services.Data
                         EndDate = a.EndDate.ToString(AppointmentTimeFormat),
                         PatientFirstName = a.Patient.FirstName,
                         PatientLastName = a.Patient.LastName
+                    }).ToList(),
+
+                Patients = practitioner.Patients
+                    .Where(pt => pt.IsActive)
+                    .Select(pt => new PatientDetailsViewModel
+                    {
+                        Id = pt.Id,
+                        FirstName = pt.FirstName,
+                        LastName = pt.LastName,
+                        Age = pt.Age,
+                        PhoneNumber = pt.PhoneNumber,
+                        Status = pt.Status
                     }).ToList()
+
             };
 
             return model;

@@ -1,135 +1,130 @@
 ﻿@using PatientManagementApp.Web.ViewModels.PatientViewModels;
-@using static PatientManagementApp.Common.ModelValidationConstraints.Global
-@model EditPatientViewModel
+@using static PatientManagementApp.Common.ModelValidationConstraints.Global;
+@model EditPatientViewModel;
 
 @{
     ViewBag.Title = "Edit Patient Details";
     var today = DateTime.UtcNow.ToString(DateFormatString);
 }
 
+<div class="container mt-5">
+    <h2 class="text-center">@ViewBag.Title</h2>
+    <hr />
 
-<h2 class="text-center">@ViewBag.Title</h2>
-<hr />
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title text-center">Update Details for @Model.FirstName @Model.LastName</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="PractitionerId" />
+                        <input type="hidden" asp-for="EmergencyContactId" />
 
-<div class="row">
-    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-        <form asp-action="Edit" method="post">
-            <input type="hidden" asp-for="PractitionerId" />
-            <input type="hidden" asp-for="EmergencyContactId" />
-            <h3>Personal Details</h3>
-            <div class="mb-3">
-                <label asp-for="@Model.FirstName" class="form-label-add-edit">First Name</label>
-                <input asp-for="@Model.FirstName" class="form-control" aria-required="true"/>
-                <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.LastName" class="form-label-add-edit">Last Name</label>
-                <input asp-for="@Model.LastName" class="form-control" aria-required="true"/>
-                <span asp-validation-for="@Model.LastName" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.DateOfBirth" class="form-label-add-edit">Date of Birth</label>
-                <input asp-for="@Model.DateOfBirth" class="form-control" aria-required="false" value="@(string.IsNullOrEmpty(Model.DateOfBirth) ? today : Model.DateOfBirth)"/>
-                <span asp-validation-for="@Model.DateOfBirth" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.Age" class="form-label-add-edit">Age</label>
-                <input asp-for="@Model.Age" class="form-control" aria-required="true"/>
-                <span asp-validation-for="@Model.Age" class="text-danger"></span>
-            </div>
-            <div>
-                <label asp-for="Gender">Gender</label>
-                <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-control"></select>
-                <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
-            <h3>Contact information</h3>
-            <div class="mb-3">
-                <label asp-for="@Model.Email" class="form-label-add-edit">Email</label>
-                <input asp-for="@Model.Email" class="form-control" aria-required="false" placeholder="Email (optional)"/>
-                <span asp-validation-for="@Model.Email" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.PhoneNumber" class="form-label-add-edit">Phone number</label>
-                <input asp-for="@Model.PhoneNumber" class="form-control" aria-required="true"/>
-                <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
-            </div>
-            <h3>Treatment Details</h3>
-            <div class="mb-3">
-                <label asp-for="@Model.ImportantInfo" class="form-label-add-edit">Important Information</label>
-                <textarea asp-for="@Model.ImportantInfo" class="form-control" aria-required="true" rows="5"></textarea>
-                <span asp-validation-for="@Model.ImportantInfo" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.Diagnosis" class="form-label-add-edit">Diagnosis</label>
-                <textarea asp-for="@Model.Diagnosis" class="form-control" aria-required="false" placeholder="Patient's diagnosis'" ></textarea>
-                <span asp-validation-for="@Model.Diagnosis" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.ReasonForVisit" class="form-label-add-edit">Reason for Visit</label>
-                <textarea asp-for="@Model.ReasonForVisit" class="form-control" aria-required="false" placeholder="Initial reason for visit (optional)"  rows="5"></textarea>
-                <span asp-validation-for="@Model.ReasonForVisit" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.ReferredBy" class="form-label-add-edit">Referred by</label>
-                <textarea asp-for="@Model.ReferredBy" class="form-control" aria-required="false" placeholder="Who referred this patient (optional)"  rows="5"></textarea>
-                <span asp-validation-for="@Model.ReferredBy" class="text-danger"></span>
-            </div>
-            <div>
-                <label asp-for="Status">Status</label>
-                <select asp-for="Status" asp-items="Model.PatientStatusOptions" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.TreatmentStartDate" class="form-label-add-edit">Treatment start date</label>
-                <input asp-for="@Model.TreatmentStartDate" class="form-control" aria-required="true" value="@(string.IsNullOrEmpty(Model.TreatmentStartDate) ? today : Model.TreatmentStartDate)"/>
-                <span asp-validation-for="@Model.TreatmentStartDate" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.TreatmentEndDate" class="form-label-add-edit">Treatment end date</label>
-                <input asp-for="@Model.TreatmentEndDate" class="form-control" aria-required="true" value="@(string.IsNullOrEmpty(Model.TreatmentStartDate) ? today : Model.TreatmentStartDate)"/>
-                <span asp-validation-for="@Model.TreatmentEndDate" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.Feedback" class="form-label-add-edit">Feedback</label>
-                <textarea asp-for="@Model.Feedback" class="form-control" aria-required="false" placeholder="Feedback from patient (optional)"  rows="5"></textarea>
-                <span asp-validation-for="@Model.Feedback" class="text-danger"></span>
-            </div>
-            <h3>Emergency Contact</h3>
-            <div class="mb-3">
-                <label asp-for="@Model.EmergencyContactName" class="form-label-add-edit">Name</label>
-                <input asp-for="@Model.EmergencyContactName" class="form-control" aria-required="false"/>
-                <span asp-validation-for="@Model.EmergencyContactName" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.EmergencyContactPhoneNumber" class="form-label-add-edit">Phone number</label>
-                <input asp-for="@Model.EmergencyContactPhoneNumber" class="form-control" aria-required="false"/>
-                <span asp-validation-for="@Model.EmergencyContactPhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.EmergencyContactRelationship" class="form-label-add-edit">Relationship</label>
-                <input asp-for="@Model.EmergencyContactRelationship" class="form-control" aria-required="false"/>
-                <span asp-validation-for="@Model.EmergencyContactRelationship" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <h3>Practitioner</h3>
-                <div class="mb-3">
-                    <label asp-for="@Model.PractitionerFirstName" class="form-label-add-edit">First Name</label>
-                    <input asp-for="@Model.PractitionerFirstName" class="form-control" aria-required="true"/>
-                    <span asp-validation-for="@Model.PractitionerFirstName" class="text-danger"></span>
+                        <h5 class="text-muted mb-3">Personal Details</h5>
+                        <div class="mb-3">
+                            <label asp-for="FirstName" class="form-label">First Name</label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="LastName" class="form-label">Last Name</label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                            <input asp-for="DateOfBirth" class="form-control" value="@(string.IsNullOrEmpty(Model.DateOfBirth) ? today : Model.DateOfBirth)" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Age" class="form-label">Age</label>
+                            <input asp-for="Age" class="form-control" />
+                            <span asp-validation-for="Age" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Gender" class="form-label">Gender</label>
+                            <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-select"></select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+
+                        <h5 class="text-muted mb-3">Contact Information</h5>
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" placeholder="Optional" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <h5 class="text-muted mb-3">Treatment Details</h5>
+                        <div class="mb-3">
+                            <label asp-for="ImportantInfo" class="form-label">Important Information</label>
+                            <textarea asp-for="ImportantInfo" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="ImportantInfo" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Diagnosis" class="form-label">Diagnosis</label>
+                            <textarea asp-for="Diagnosis" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Diagnosis" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ReasonForVisit" class="form-label">Reason for Visit</label>
+                            <textarea asp-for="ReasonForVisit" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="ReasonForVisit" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ReferredBy" class="form-label">Referred By</label>
+                            <textarea asp-for="ReferredBy" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="ReferredBy" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label">Status</label>
+                            <select asp-for="Status" asp-items="Model.PatientStatusOptions" class="form-select"></select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TreatmentStartDate" class="form-label">Treatment Start Date</label>
+                            <input asp-for="TreatmentStartDate" class="form-control" value="@(string.IsNullOrEmpty(Model.TreatmentStartDate) ? today : Model.TreatmentStartDate)" />
+                            <span asp-validation-for="TreatmentStartDate" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TreatmentEndDate" class="form-label">Treatment End Date</label>
+                            <input asp-for="TreatmentEndDate" class="form-control" value="@(string.IsNullOrEmpty(Model.TreatmentEndDate) ? today : Model.TreatmentEndDate)" />
+                            <span asp-validation-for="TreatmentEndDate" class="text-danger"></span>
+                        </div>
+
+                        <h5 class="text-muted mb-3">Emergency Contact</h5>
+                        <div class="mb-3">
+                            <label asp-for="EmergencyContactName" class="form-label">Name</label>
+                            <input asp-for="EmergencyContactName" class="form-control" />
+                            <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="EmergencyContactPhoneNumber" class="form-label">Phone Number</label>
+                            <input asp-for="EmergencyContactPhoneNumber" class="form-control" />
+                            <span asp-validation-for="EmergencyContactPhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="EmergencyContactRelationship" class="form-label">Relationship</label>
+                            <input asp-for="EmergencyContactRelationship" class="form-control" />
+                            <span asp-validation-for="EmergencyContactRelationship" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-3">
+                            <i class="bi bi-check-circle"></i> Confirm
+                        </button>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.PractitionerLastName" class="form-label-add-edit">Last Name</label>
-                    <input asp-for="@Model.PractitionerLastName" class="form-control" aria-required="true"/>
-                    <span asp-validation-for="@Model.PractitionerLastName" class="text-danger"></span>
-                </div>
-                <input class="btn btn-warning btn-dark-text mb-2 w-100 py-3 fw-bold rounded" type="submit" value="Confirm"/>
             </div>
-        </form>
+        </div>
     </div>
 </div>
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-

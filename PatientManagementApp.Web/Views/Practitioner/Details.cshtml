@@ -1,55 +1,138 @@
-﻿
-
-
-@using PatientManagementApp.Web.ViewModels.AppointmentViewModels
+﻿@using PatientManagementApp.Web.ViewModels.AppointmentViewModels
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PatientManagementApp.Web.ViewModels.PractitionerViewModels.PractitionerDetailsViewModel
 
 @{
-    ViewBag.Title = "My Details";
+    ViewBag.Title = "Practitioner Details";
 }
 
-<h1>@ViewBag.Title</h1>
+<div class="bg-muted-blue py-4">
+    <div class="container">
+        <h1 class="text-center mb-4">@ViewBag.Title</h1>
 
-<h2>@Model.FirstName @Model.LastName</h2>
+        <!-- Practitioner Details -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-dark-blue text-white">
+                <h2 class="mb-0">@Model.FirstName @Model.LastName</h2>
+            </div>
+            <div class="card-body">
+                @if (User.IsInRole("Admin"))
+                {
+                    <p class="text-muted">Admin View: Viewing details for Practitioner @Model.FirstName @Model.LastName.</p>
+                }
+                else
+                {
+                    <p>Welcome, @Model.FirstName @Model.LastName!</p>
+                }
 
-<p><strong>Phone Number:</strong> @Model.Phone</p>
-<p><strong>Email:</strong> @Model.Email</p>
-<p><strong>Specialties:</strong> </p>
-@if (Model.Specialties.Any())
-{
-    <ul>
-        @foreach (var specialty in Model.Specialties)
-        {
-            <li>@specialty</li>
-        }
-    </ul>
-}
-else
-{
-    <p>No specialties listed.</p>
-}
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Edit Details</a>
+                <p><strong>Phone Number:</strong> @Model.Phone</p>
+                <p><strong>Email:</strong> @Model.Email</p>
 
+                <p><strong>Specialties:</strong></p>
+                @if (Model.Specialties.Any())
+                {
+                    <ul>
+                        @foreach (var specialty in Model.Specialties)
+                        {
+                            <li>@specialty</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No specialties listed.</p>
+                }
 
-<h3>Appointments</h3>
-@if (Model.Appointments.Any())
-{
-    <ul class="list-group">
-        @foreach (AppointmentInfoViewModel a in Model.Appointments)
-        {
-            <li class="list-group-item">
-                <strong>@a.PatientFirstName @a.PatientLastName</strong><br />
-                <small>Time: @a.StartDate</small>
-            </li>
-        }
-    </ul>
-}
-else
-{
-    <p>No appointments scheduled.</p>
-}
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mt-3">
+                    <i class="bi bi-pencil-square"></i> Edit Details
+                </a>
+            </div>
+        </div>
 
-<a asp-controller="Appointment" asp-action="Create" asp-route-practitionerId="@Model.Id" class="btn btn-primary">Create Appointment</a>
+        <!-- Appointments -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-muted-dark-blue text-white">
+                <h3 class="mb-0">Appointments</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.Appointments.Any())
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (AppointmentInfoViewModel a in Model.Appointments)
+                        {
+                            <li class="list-group-item">
+                                <strong>@a.PatientFirstName @a.PatientLastName</strong><br />
+                                <small>Time: @a.StartDate</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No appointments scheduled.</p>
+                }
+
+                <a asp-controller="Appointment" asp-action="Create" asp-route-practitionerId="@Model.Id" class="btn btn-outline-success mt-3">
+                    <i class="bi bi-plus-circle"></i> Create Appointment
+                </a>
+            </div>
+        </div>
+
+        <!-- Active Patients -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-muted-dark-blue text-white">
+                <h3 class="mb-0">Active Patients</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.Patients.Any())
+                {
+                    <table class="table table-striped">
+                        <thead class="bg-dark-blue text-white">
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Age</th>
+                                <th>Phone Number</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.Patients)
+                            {
+                                <tr>
+                                    <td>@p.FirstName</td>
+                                    <td>@p.LastName</td>
+                                    <td>@p.Age</td>
+                                    <td>@p.PhoneNumber</td>
+                                    <td>@p.Status</td>
+                                    <td>
+                                        <a asp-controller="Patient" asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-info btn-sm">
+                                            <i class="bi bi-info-circle"></i> Details
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Patient" asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Patient" asp-action="Delete" asp-route-id="@p.Id" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No active patients assigned to this practitioner.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
 
 

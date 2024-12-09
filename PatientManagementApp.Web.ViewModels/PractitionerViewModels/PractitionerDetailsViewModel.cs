@@ -3,6 +3,7 @@
 using PatientManagementApp.Data.Models;
 using PatientManagementApp.Services.Mapping;
 using PatientManagementApp.Web.ViewModels.AppointmentViewModels;
+using PatientManagementApp.Web.ViewModels.PatientViewModels;
 
 
 namespace PatientManagementApp.Web.ViewModels.PractitionerViewModels
@@ -21,7 +22,7 @@ namespace PatientManagementApp.Web.ViewModels.PractitionerViewModels
 
         public bool IsAvailableOnline { get; set; }
 
-        public ICollection<Patient> Patients { get; set; } = new List<Patient>();
+        public List<PatientDetailsViewModel> Patients { get; set; } = new List<PatientDetailsViewModel>();
 
         public List<AppointmentInfoViewModel> Appointments { get; set; } = new List<AppointmentInfoViewModel>();
 

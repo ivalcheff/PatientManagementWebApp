@@ -1,42 +1,73 @@
-﻿
-
-@using PatientManagementApp.Web.ViewModels.PatientViewModels
+﻿@using PatientManagementApp.Web.ViewModels.PatientViewModels
 @model IEnumerable<PatientDetailsViewModel>
 
-<h2 class="text-center">@ViewBag.Title</h2>
+<div class="container bg-muted-blue p-4">
+    <h2 class="text-center text-dark-blue my-4">
+        <i class="bi bi-people-fill"></i> @ViewBag.Title
+    </h2>
 
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Age</th>
-        <th>Phone Number</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var p in Model)
-    {
-        <tr>
-            <td>@p.FirstName</td>
-            <td>@p.LastName</td>
-            <td>@p.Age</td>
-            <td>@p.PhoneNumber</td>
-            <td>@p.Status</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-info">Details</a>
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-info">Edit</a>
-            </td>
-            <td>
-                <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-danger">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark-blue text-white">
+            <h3 class="card-title text-center">Patient List</h3>
+        </div>
+        <div class="card-body">
+            @if (Model == null || !Model.Any())
+            {
+                <p class="text-center text-muted">No patients available.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead>
+                            <tr class="text-dark-blue" style="background-color: transparent;">
+                                <th scope="col"><i class="bi bi-person-circle"></i> First Name</th>
+                                <th scope="col"><i class="bi bi-person-circle"></i> Last Name</th>
+                                <th scope="col"><i class="bi bi-calendar3"></i> Age</th>
+                                <th scope="col"><i class="bi bi-telephone-fill"></i> Phone Number</th>
+                                <th scope="col"><i class="bi bi-activity"></i> Status</th>
+                                <th scope="col"><i class="bi bi-tools"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model)
+                            {
+                                <tr>
+                                    <td>@p.FirstName</td>
+                                    <td>@p.LastName</td>
+                                    <td>@p.Age</td>
+                                    <td>@p.PhoneNumber</td>
+                                    <td>
+                                        <span class="badge bg-info">@p.Status</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center">
+                                            <a asp-action="Details" asp-route-id="@p.Id"
+                                               class="btn btn-outline-info btn-sm me-2">
+                                                <i class="bi bi-info-circle"></i> Details
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@p.Id"
+                                               class="btn btn-outline-warning btn-sm me-2">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@p.Id"
+                                               class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
 
-<a asp-action="Create" class="btn btn-primary">Add New Patient</a>
+    <div class="text-end mt-3">
+        <a asp-action="Create" class="btn btn-outline-success btn-lg">
+            <i class="bi bi-plus-circle"></i> Add New Patient
+        </a>
+    </div>
+</div>
