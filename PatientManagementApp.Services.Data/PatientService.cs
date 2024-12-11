@@ -113,19 +113,51 @@ namespace PatientManagementApp.Services.Data
                 return false;
             }
 
-            if (!ValidateDate(model.TreatmentEndDate, DateFormatString, out DateTime treatmentEndDate))
+            DateTime? treatmentEndDate = null;
+            if (!string.IsNullOrWhiteSpace(model.TreatmentEndDate))
             {
-                return false;
+                if (!ValidateDate(model.TreatmentEndDate, DateFormatString, out DateTime tempTreatmentEndDate))
+                {
+                    return false;
+                }
+                treatmentEndDate = tempTreatmentEndDate;
             }
 
-            Patient editedPatient = AutoMapperConfig.MapperInstance.Map<Patient>(model);
-            editedPatient.BirthDate = dateOfBirth;
-            editedPatient.TreatmentStartDate = treatmentStartDate;
-            editedPatient.TreatmentEndDate = treatmentEndDate;
-            editedPatient.PractitionerId = model.PractitionerId;
-            editedPatient.EmergencyContactId = model.EmergencyContactId;
+            var patient = await _patientRepository
+                .GetAllAttached()
+                .Include(p=>p.EmergencyContact)
+                .Include(p => p.Practitioner)
+                .FirstOrDefaultAsync(p => p.Id == model.Id);
+           
+            if (patient == null)
+            {
+                return false; // Patient does not exist
+            }
 
-            return await this._patientRepository.UpdateAsync(editedPatient);
+            patient.FirstName = model.FirstName;
+            patient.LastName = model.LastName;
+            patient.BirthDate = dateOfBirth;
+            patient.TreatmentStartDate = treatmentStartDate;
+            patient.TreatmentEndDate = treatmentEndDate;
+            patient.Gender = model.Gender;
+            patient.Status = model.Status;
+            patient.PhoneNumber = model.PhoneNumber;
+            patient.ImportantInfo = model.ImportantInfo;
+            patient.Diagnosis = model.Diagnosis;
+            patient.ReasonForVisit = model.ReasonForVisit;
+            patient.ReferredBy = model.ReferredBy;
+            patient.PractitionerId = model.PractitionerId;
+            patient.EmergencyContactId = model.EmergencyContactId;
+
+            if (patient.EmergencyContact != null)
+            {
+                patient.EmergencyContact.Name = model.EmergencyContactName;
+                patient.EmergencyContact.PhoneNumber = model.EmergencyContactPhoneNumber;
+                patient.EmergencyContact.Relationship = model.EmergencyContactRelationship;
+            }
+
+
+            return await this._patientRepository.UpdateAsync(patient);
         }
 
        //ADD NEW PATIENT

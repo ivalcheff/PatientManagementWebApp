@@ -20,16 +20,15 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
         public Guid PractitionerId { get; set; }
         public Guid EmergencyContactId { get; set; }
 
-        [Required]
         [MinLength(FirstNameMinLength)]
         [MaxLength(FirstNameMaxLength)]
-        public string PractitionerFirstName { get; set; } = null!;
+        public string? PractitionerFirstName { get; set; }
 
 
-        [Required]
+     
         [MinLength(LastNameMinLength)]
         [MaxLength(LastNameMaxLength)]
-        public string PractitionerLastName { get; set; } = null!;
+        public string? PractitionerLastName { get; set; }
 
         [Required(ErrorMessage = FirstNameIsRequired)]
         [MinLength(FirstNameMinLength)]
@@ -63,7 +62,9 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
 
 
         //Treatment info
-        public string? TreatmentStartDate { get; set; }
+
+        [Required(ErrorMessage = DateFormatIsIncorrect)]
+        public string TreatmentStartDate { get; set; } = null!;
         public string? TreatmentEndDate { get; set; }
 
         public PatientStatus Status { get; set; }
@@ -117,7 +118,7 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
                 .ForMember(d => d.TreatmentStartDate,
                     x => x.MapFrom(s => s.TreatmentStartDate.ToString(DateFormatString)))
                 .ForMember(d => d.TreatmentEndDate,
-                    x => x.MapFrom(s => s.TreatmentEndDate.ToString(DateFormatString)));
+                    x => x.MapFrom(s => s.TreatmentEndDate.ToString()));
 
 
             configuration.CreateMap<EditPatientViewModel, Patient>()

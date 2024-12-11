@@ -54,7 +54,7 @@ namespace PatientManagementApp.Web.ViewModels.PatientViewModels
                 .ForMember(d => d.TreatmentStartDate, 
                     x => x.MapFrom(s => s.TreatmentStartDate.ToString(DateFormatString)))
                 .ForMember(d => d.TreatmentEndDate, 
-                    x => x.MapFrom(s => s.TreatmentEndDate.ToString(DateFormatString)));
+                    x => x.MapFrom(s => s.TreatmentEndDate.ToString()));
         }
     }
 }

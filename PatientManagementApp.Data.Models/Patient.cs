@@ -52,7 +52,7 @@ namespace PatientManagementApp.Data.Models
 
 
         [Comment("Final date of the treatment")]
-        public DateTime TreatmentEndDate { get; set; }
+        public DateTime? TreatmentEndDate { get; set; }
 
         [MaxLength(ReasonForVisitMaxLength)]
         [Comment("Initial reason for visiting")]

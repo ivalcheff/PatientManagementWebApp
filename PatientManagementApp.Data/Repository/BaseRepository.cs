@@ -125,15 +125,23 @@ namespace PatientManagementApp.Data.Repository
         {
             try
             {
-                this._dbSet.Attach(item);
-                this._dbContext.Entry(item).State = EntityState.Modified;
-                await this._dbContext.SaveChangesAsync();
-
+                _dbSet.Attach(item); // Attach the entity
+                _dbContext.Entry(item).State = EntityState.Modified; // Mark it as modified
+                await _dbContext.SaveChangesAsync(); // Save changes to the database
                 return true;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                Console.WriteLine("Database Update Exception: " + dbEx.Message);
+                if (dbEx.InnerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + dbEx.InnerException.Message);
+                }
+                return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"UpdateAsync failed: {ex.Message}");
+                Console.WriteLine("General Exception: " + ex.Message);
                 Console.WriteLine(ex.StackTrace);
                 return false;
             }

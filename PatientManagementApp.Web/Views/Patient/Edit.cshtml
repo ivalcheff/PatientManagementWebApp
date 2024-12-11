@@ -94,7 +94,7 @@
                         </div>
                         <div class="mb-3">
                             <label asp-for="TreatmentEndDate" class="form-label">Treatment End Date</label>
-                            <input asp-for="TreatmentEndDate" class="form-control" value="@(string.IsNullOrEmpty(Model.TreatmentEndDate) ? today : Model.TreatmentEndDate)" />
+                            <input asp-for="TreatmentEndDate" class="form-control"  />
                             <span asp-validation-for="TreatmentEndDate" class="text-danger"></span>
                         </div>
 

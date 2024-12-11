@@ -148,6 +148,12 @@ namespace PatientManagementApp.Web.Controllers
         {
             if (ModelState.IsValid == false)
             {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                Console.WriteLine("ModelState Errors: " + string.Join(", ", errors));
+
                 model.GenderOptions = GetGenderOptions();
                 model.PatientStatusOptions = GetStatusOptions();
                 return View(model);
