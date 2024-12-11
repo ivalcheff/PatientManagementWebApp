@@ -40,6 +40,8 @@ namespace PatientManagementApp.Data
         public virtual DbSet<PatientsMedications> PatientsMedications { get; set; } = null!;
         public virtual DbSet<PractitionersSpecialties> PractitionersSpecialties { get; set; } = null!;
 
+
+        /*
         public async Task SeedData(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
@@ -47,13 +49,6 @@ namespace PatientManagementApp.Data
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
-            //var existingUsers = Users.ToList();
-            //if (existingUsers.Any())
-            //{
-            //    Users.RemoveRange(existingUsers);
-            //    Practitioners.RemoveRange(Practitioners);
-            //    await SaveChangesAsync();
-            //}
 
             // Seed roles
             var roles = new[] { "Admin", "User", "Client" };
@@ -138,7 +133,7 @@ namespace PatientManagementApp.Data
             }
 
             await SaveChangesAsync();
-        }
+        }*/
 
     }
 }

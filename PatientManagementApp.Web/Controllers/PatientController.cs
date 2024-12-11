@@ -29,7 +29,13 @@ namespace PatientManagementApp.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            var userId = user!.Id;
+            if (user == null)
+            {
+                // Redirect to the login page if the user is not authenticated
+                return Unauthorized();
+            }
+
+            var userId = user.Id;
 
             // Check if the user has the Admin role
             bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");

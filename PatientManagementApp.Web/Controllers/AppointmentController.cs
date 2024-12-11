@@ -25,16 +25,17 @@ namespace PatientManagementApp.Web.Controllers
         //INDEX
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
         {
-           var user = await _userManager.GetUserAsync(User);
-           var userId = user!.Id;
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user!.Id;
 
-           IEnumerable<AppointmentInfoViewModel> appointments
-               = await this._appointmentService
-                   .IndexAllOrderedByDateAsync(userId);
+            var (appointments, totalCount) = await this._appointmentService.IndexAllOrderedByDateAsync(userId, pageNumber, pageSize);
 
-           return View(appointments);
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return View(appointments);
         }
 
         //DETAILS

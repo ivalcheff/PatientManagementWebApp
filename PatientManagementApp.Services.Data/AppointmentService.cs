@@ -28,20 +28,26 @@ namespace PatientManagementApp.Services.Data
 
 
         //INDEX
-        public async Task<IEnumerable<AppointmentInfoViewModel>> IndexAllOrderedByDateAsync(Guid userId)
+        public async Task<(IEnumerable<AppointmentInfoViewModel> Appointments, int TotalCount)> IndexAllOrderedByDateAsync(Guid userId, int pageNumber, int pageSize)
         {
-            var appointments = await this._appointmentRepository
+            var query = this._appointmentRepository
                 .GetAllAttached()
-                .Where(a => a.PractitionerId == userId)
-                .Where(a => a.IsDeleted == false)
+                .Where(a => a.PractitionerId == userId && !a.IsDeleted)
                 .AsNoTracking()
                 .OrderBy(a => a.StartDate)
-                .Include(a => a.Patient)
+                .Include(a => a.Patient);
+
+            var totalCount = await query.CountAsync();
+
+            var appointments = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .To<AppointmentInfoViewModel>()
                 .ToListAsync();
 
-            return appointments;
+            return (appointments, totalCount);
         }
+
 
         //DETAILS
         public async Task<AppointmentInfoViewModel> GetAppointmentDetailsByIdAsync(int id, Guid userId)

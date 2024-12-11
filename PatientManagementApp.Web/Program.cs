@@ -22,8 +22,9 @@ namespace PatientManagementApp.Web
             var connectionString = builder.Configuration.GetConnectionString("SQLServer") ?? throw new InvalidOperationException("Connection string 'SQLServer' not found.");
             
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
-            
+                options.UseSqlServer(connectionString, sqlOptions =>
+                    sqlOptions.EnableRetryOnFailure()));
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             //Identity
@@ -41,11 +42,15 @@ namespace PatientManagementApp.Web
             builder.Services.ConfigureApplicationCookie(cfg =>
             {
                 cfg.LoginPath = "/Identity/Account/Login";
+                cfg.LogoutPath = "/Identity/Account/Logout";
             });
 
 
             builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
             builder.Services.RegisterUserDefinedServices(typeof(IAppointmentService).Assembly);
+
+            // Register Database Seeder
+            builder.Services.AddScoped<DatabaseSeeder>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
@@ -84,14 +89,23 @@ namespace PatientManagementApp.Web
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+                await context.Database.MigrateAsync(); // Replaces EnsureCreatedAsync
 
-                // Ensure the database is created (necessary if it hasn't been initialized yet)
-                await context.Database.EnsureCreatedAsync();
-
-                //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-
-                await context.SeedData(scope.ServiceProvider);
+                await seeder.SeedAsync();
             }
+
+
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            //    // Ensure the database is created (necessary if it hasn't been initialized yet)
+            //    await context.Database.EnsureCreatedAsync();
+
+
+            //    await context.SeedData(scope.ServiceProvider);
+            //}
 
             app.Run();
         }

@@ -3,6 +3,8 @@
 
 @{
     ViewBag.Title = "My Appointments";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
 }
 
 <div class="container bg-muted-blue p-4">
@@ -20,13 +22,13 @@
             else
             {
                 <table class="table table-hover table-bordered">
-                    <thead class="table-dark">
+                    <thead>
                         <tr>
-                            <th scope="col">First Name</th>
-                            <th scope="col">Last Name</th>
-                            <th scope="col">Start</th>
-                            <th scope="col">End</th>
-                            <th scope="col" class="text-center">Actions</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,7 +58,35 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-end">
+    @if (totalPages > 1)
+    {
+        <nav>
+            <ul class="pagination justify-content-center">
+                @if (currentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(currentPage - 1)">Previous</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                    </li>
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(currentPage + 1)">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+
+    <div class="d-flex justify-content-end mt-3">
         <a asp-action="Create" class="btn btn-outline-success btn-lg">
             <i class="bi bi-plus-circle"></i> Add New Appointment
         </a>
